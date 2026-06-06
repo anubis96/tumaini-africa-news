@@ -1,0 +1,577 @@
+{# templates/article/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ article.title }} | TUMAINI AFRICA NEWS{% endblock %}
+
+{% block meta %}
+    {{ parent() }}
+    <meta name="description" content="{{ article.content|striptags|slice(0, 160) }}">
+    <meta name="author" content="{{ article.author.firstname ~ ' ' ~ article.author.lastname }}">
+    
+    {# Open Graph / Facebook / WhatsApp #}
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ app.request.uri }}">
+    <meta property="og:title" content="{{ article.title }}">
+    <meta property="og:description" content="{{ article.content|striptags|slice(0, 160) }}">
+    <meta property="og:site_name" content="TUMAINI AFRICA NEWS">
+    <meta property="article:published_time" content="{{ article.publishedAt|date('c') }}">
+    <meta property="article:author" content="{{ article.author.firstname ~ ' ' ~ article.author.lastname }}">
+    <meta property="article:section" content="{{ article.category.name }}">
+    
+    {# Image - Version absolue pour WhatsApp #}
+    {% set absoluteImageUrl = article.imageUrl ? absolute_url(vich_uploader_asset(article, 'imageFile')) : absolute_url('/images/static/default.png') %}
+    <meta property="og:image" content="{{ absoluteImageUrl }}">
+    <meta property="og:image:secure_url" content="{{ absoluteImageUrl }}">
+    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="{{ article.title }}">
+    
+    {# Twitter Card #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ article.title }}">
+    <meta name="twitter:description" content="{{ article.content|striptags|slice(0, 160) }}">
+    <meta name="twitter:image" content="{{ absoluteImageUrl }}">
+    
+    {# WhatsApp spécifique #}
+    <meta property="og:image:url" content="{{ absoluteImageUrl }}">
+{% endblock %}
+
+{% block body %}
+<div class="fade-in bg-gray-50 min-h-screen">
+    <article class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Category Badge -->
+        <div class="slide-in-left mb-4">
+            <a href="{{ path('app_category_public', {'slug': article.category.slug}) }}" 
+               class="inline-flex items-center gap-2 bg-amber-100 text-amber-700 hover:bg-amber-600 hover:text-white transition-all duration-300 text-sm font-semibold px-4 py-1.5 rounded-full">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l5 5a2 2 0 01.586 1.414V19a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                </svg>
+                {{ article.category.name }}
+            </a>
+        </div>
+
+        <!-- Title -->
+        <header class="mb-6 slide-in-right">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
+                {{ article.title }}
+            </h1>
+            
+            <!-- Meta Info -->
+            <div class="flex flex-wrap items-center gap-4 text-sm text-gray-500 pb-5 border-b border-gray-200">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-full bg-orange-500 flex items-center justify-center text-white text-sm font-bold">
+                        TAN
+                    </div>
+                    <div>
+                        <span class="font-medium text-gray-900">La Rédaction</span>
+                        <span class="text-xs text-gray-400 ml-1">Journaliste</span>
+                    </div>
+                </div>
+                <span>•</span>
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <time datetime="{{ article.publishedAt|date('c') }}">
+                        {{ article.publishedAt|date('d/m/Y à H:i') }}
+                    </time>
+                </div>
+                <span>•</span>
+                <div class="flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>{{ article.content|striptags|length / 1000|round(0) }} min de lecture</span>
+                </div>
+                {% if article.viewCount %}
+                    <span>•</span>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                        <span>{{ article.viewCount }} vues</span>
+                    </div>
+                {% endif %}
+                {% if article.updatedAt > article.publishedAt %}
+                    <span>•</span>
+                    <div class="flex items-center gap-2 text-amber-600">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                        </svg>
+                        <span>Mis à jour le {{ article.updatedAt|date('d/m/Y') }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </header>
+
+        <!-- Social Sharing Bar Premium -->
+        <div class="flex items-center justify-between mb-6 bg-white rounded-xl shadow-sm p-3">
+            <div class="flex items-center gap-3">
+                <span class="text-sm font-medium text-gray-600">Partager :</span>
+                <div class="flex gap-2">
+                    <button onclick="shareOnFacebook()" 
+                            class="group relative w-9 h-9 rounded-full bg-[#1877f2] hover:bg-[#1877f2]/80 transition-all hover:scale-110 flex items-center justify-center text-white shadow-sm">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.879v-6.99h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.99C18.343 21.128 22 16.991 22 12z"/>
+                        </svg>
+                        <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Facebook</span>
+                    </button>
+                    
+                    <button onclick="shareOnTwitter()" 
+                            class="group relative w-9 h-9 rounded-full bg-black hover:bg-gray-800 transition-all hover:scale-110 flex items-center justify-center text-white shadow-sm">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M13.795 10.533 20.68 2h-3.073l-5.255 6.517L7.69 2H1l7.806 10.91L1.47 22h3.074l5.705-7.07L15.31 22H22l-8.205-11.467Zm-2.38 2.95L9.97 11.464 4.36 3.627h2.31l4.528 6.317 1.443 2.02 6.018 8.409h-2.31l-4.934-6.89Z"/>
+                        </svg>
+                        <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Twitter</span>
+                    </button>
+                    
+                    <button onclick="shareOnWhatsAppPremium()" 
+                            class="group relative w-9 h-9 rounded-full bg-[#25D366] hover:bg-[#25D366]/80 transition-all hover:scale-110 flex items-center justify-center text-white shadow-sm">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12.032 2.001c-5.517 0-10 4.483-10 10 0 1.751.451 3.473 1.311 5.002L2 22l5.047-1.315a9.973 9.973 0 004.985 1.316c5.517 0 10-4.483 10-10s-4.483-10-10-10zm0 18.5c-1.676 0-3.275-.465-4.682-1.343l-.339-.202-3.008.784.802-2.926-.221-.35a8.442 8.442 0 01-1.302-4.463c0-4.663 3.794-8.457 8.457-8.457s8.457 3.794 8.457 8.457-3.794 8.457-8.457 8.457z"/>
+                            <path d="M16.969 13.027c-.261-.131-1.545-.764-1.785-.85-.24-.087-.414-.131-.588.13-.174.261-.675.85-.828 1.025-.152.174-.305.196-.566.066-.261-.131-1.104-.408-2.104-1.302-.777-.694-1.301-1.551-1.454-1.813-.152-.261-.017-.402.114-.532.117-.117.261-.305.392-.457.131-.152.174-.261.261-.435.087-.174.044-.326-.022-.457-.066-.131-.588-1.416-.806-1.939-.212-.508-.428-.439-.588-.447-.152-.008-.327-.008-.502-.008-.174 0-.457.066-.696.326-.239.261-.914.894-.914 2.18 0 1.286.936 2.528 1.067 2.704.131.174 1.841 2.811 4.468 3.942.624.269 1.112.429 1.492.549.627.2 1.198.171 1.65.104.504-.073 1.545-.631 1.763-1.24.218-.609.218-1.131.152-1.24-.065-.109-.24-.174-.501-.305z"/>
+                        </svg>
+                        <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">WhatsApp</span>
+                    </button>
+                    
+                    <button onclick="shareOnLinkedIn()" 
+                            class="group relative w-9 h-9 rounded-full bg-[#0A66C2] hover:bg-[#0A66C2]/80 transition-all hover:scale-110 flex items-center justify-center text-white shadow-sm">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451c.979 0 1.771-.773 1.771-1.729V1.729C24 .774 23.203 0 22.225 0z"/>
+                        </svg>
+                        <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">LinkedIn</span>
+                    </button>
+                    
+                    <button onclick="copyToClipboard()" id="copyBtn"
+                            class="group relative w-9 h-9 rounded-full bg-gray-500 hover:bg-amber-600 transition-all hover:scale-110 flex items-center justify-center text-white shadow-sm">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        <span class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">Copier</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <div class="w-32 h-1 bg-gray-200 rounded-full overflow-hidden">
+                    <div id="readingProgress" class="h-full bg-amber-500 rounded-full" style="width: 0%"></div>
+                </div>
+                <span id="progressPercent" class="text-xs text-gray-400">0%</span>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Left Column -->
+            <div class="lg:w-2/3">
+                <!-- Main Image optimisée -->
+                <figure class="mb-8 zoom-in">
+                    <div class="relative overflow-hidden rounded-xl shadow-lg bg-gray-100">
+                        {% if article.imageUrl %}
+                            <img src="{{ vich_uploader_asset(article, 'imageFile') }}" 
+                                 alt="{{ article.title }}" 
+                                 loading="eager"
+                                 decoding="async"
+                                 width="800"
+                                 height="450"
+                                 class="w-full h-auto max-h-96 object-contain md:object-cover transition-transform duration-700 hover:scale-105">
+                        {% else %}
+                            <img src="{{ 'images/static/default.png' }}" 
+                                 alt="{{ article.title }}" 
+                                 loading="eager"
+                                 decoding="async"
+                                 width="800"
+                                 height="450"
+                                 class="w-full h-64 md:h-80 object-cover transition-transform duration-700 hover:scale-105">
+                        {% endif %}
+                    </div>
+                    <figcaption class="mt-3 text-sm text-gray-500 italic text-center">
+                        {{ article.title }}
+                    </figcaption>
+                </figure>
+
+                <!-- Audio Player -->
+                {% if article.emissionUrl %}
+                <div class="mb-8 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-5 shadow-md">
+                    <div class="flex items-center justify-between flex-wrap gap-4">
+                        <div class="flex items-center gap-3">
+                            <button id="playButton" class="w-12 h-12 bg-gradient-to-r from-amber-600 to-orange-500 rounded-full flex items-center justify-center text-white shadow-md hover:shadow-lg hover:scale-105 transition-all">
+                                <svg id="playIcon" class="w-5 h-5 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                </svg>
+                                <svg id="pauseIcon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            </button>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Podcast / Interview</h3>
+                                <p class="text-xs text-gray-500">Écoutez cet article</p>
+                            </div>
+                        </div>
+                        <div class="flex-1 max-w-md">
+                            <div class="flex items-center gap-2">
+                                <span id="currentTime" class="text-xs text-gray-500 font-mono">0:00</span>
+                                <div class="flex-1 relative">
+                                    <div class="h-1.5 bg-gray-200 rounded-full overflow-hidden cursor-pointer" id="progressContainer">
+                                        <div id="progressFill" class="h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <span id="duration" class="text-xs text-gray-500 font-mono">0:00</span>
+                            </div>
+                        </div>
+                        <button id="speedBtn" class="text-xs font-semibold bg-white px-3 py-1.5 rounded-full text-amber-600 shadow-sm hover:shadow transition-all">1x</button>
+                    </div>
+                    <audio id="audioPlayer" preload="metadata" class="hidden">
+                        <source src="{{ vich_uploader_asset(article, 'emissionFile') }}" type="audio/mpeg">
+                    </audio>
+                </div>
+                {% endif %}
+
+                <!-- Article Content -->
+                <div class="bg-white rounded-xl shadow-md p-6 md:p-8">
+                    <div class="prose prose-lg max-w-none prose-headings:text-gray-800 prose-headings:font-bold prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-amber-600 prose-a:no-underline hover:prose-a:text-amber-700 prose-strong:text-gray-900 prose-li:text-gray-700 prose-img:rounded-lg prose-img:shadow-md">
+                        {{ article.content|raw }}
+                    </div>
+                    
+                    <!-- Google AdSense -->
+                    <div class="mt-8">
+                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3326906173354935" crossorigin="anonymous"></script>
+                        <ins class="adsbygoogle"
+                            style="display:block"
+                            data-ad-format="fluid"
+                            data-ad-layout-key="-h2+d+5c-9-3e"
+                            data-ad-client="ca-pub-3326906173354935"
+                            data-ad-slot="9224543811"></ins>
+                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+                    </div>
+                    
+                    <!-- Author Bio -->
+                    <div class="mt-10 pt-6 border-t border-gray-100">
+                        <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-xl">
+                            <div class="w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center text-white text-xl font-bold shadow-md">
+                                TAN
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800">TAN MEDIA</h4>
+                                <p class="text-sm text-amber-600">Journaliste - Blogueur</p>
+                                <p class="text-sm text-gray-500 mt-1">Passionné par l'actualité africaine</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Tags -->
+                    <div class="mt-8">
+                        <h4 class="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l5 5a2 2 0 01.586 1.414V19a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                            </svg>
+                            Mots-clés
+                        </h4>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm hover:bg-amber-500 hover:text-white transition-all duration-300 cursor-pointer">Uvira</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm hover:bg-amber-500 hover:text-white transition-all duration-300 cursor-pointer">Christian</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm hover:bg-amber-500 hover:text-white transition-all duration-300 cursor-pointer">RDC</span>
+                            <span class="bg-gray-100 text-gray-700 px-3 py-1.5 rounded-full text-sm hover:bg-amber-500 hover:text-white transition-all duration-300 cursor-pointer">Actualité</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Comments Section -->
+                    <section class="container mx-auto px-4 py-8 max-w-6xl">
+                        {{ include('single_article_public/_comment.html.twig', {
+                            'comments': comments,
+                            'article': article
+                        }) }}
+                    </section>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="lg:w-1/3 space-y-2">
+                <section class="border-t border-gray-100">
+                    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="flex justify-between items-center mb-6">
+                            <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                                <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                </svg>
+                                Articles similaires
+                            </h3>
+                        </div>
+                        
+                        <div class="flex flex-col gap-3">
+                            {% for relatedArticle in relatedArticles %}
+                                <article class="bg-gray-50 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group">
+                                    <div class="relative h-48 overflow-hidden">
+                                        <img src="{{ vich_uploader_asset(relatedArticle, 'imageFile')|default('images/static/default.png') }}" 
+                                            alt="{{ relatedArticle.title }}" 
+                                            loading="lazy"
+                                            decoding="async"
+                                            width="400"
+                                            height="192"
+                                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        <span class="absolute top-3 left-3 bg-amber-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                                            {{ relatedArticle.category.name }}
+                                        </span>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-bold text-gray-800 mb-2 line-clamp-2 group-hover:text-amber-600 transition-colors">
+                                            <a href="{{ path('app_single_article_public', {'slug': relatedArticle.slug}) }}">
+                                                {{ relatedArticle.title }}
+                                            </a>
+                                        </h4>
+                                        <div class="flex items-center justify-between text-xs text-gray-400 mt-3">
+                                            <span>{{ relatedArticle.publishedAt|date('d/m/Y') }}</span>
+                                            <span class="flex items-center gap-1">
+                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                </svg>
+                                                {{ relatedArticle.viewCount }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </article>
+                            {% endfor %}
+                            <a href="{{ path('app_category_public', {'slug': article.category.slug}) }}" 
+                               class="text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1 group">
+                                Voir plus
+                                <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Publicité sidebar -->
+                <div class="bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-100 text-center">
+                    <span class="text-xs text-gray-400 uppercase tracking-wider">Publicité</span>
+                    <div class="mt-3">
+                        <div class="bg-gray-200 h-64 rounded-lg flex items-center justify-center text-gray-400">
+                            Espace publicitaire
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>
+// ============================================
+// SOLUTION 3: PARTAGE WHATSAPP PREMIUM
+// ============================================
+
+const shareConfig = {
+    title: '{{ article.title|escape('js') }}',
+    url: '{{ app.request.uri }}',
+    absoluteUrl: '{{ absolute_url(app.request.uri) }}'
+};
+
+function shareOnWhatsAppPremium() {
+    const text = encodeURIComponent(shareConfig.title);
+    const url = encodeURIComponent(shareConfig.absoluteUrl);
+    const fullMessage = `${text}%20${url}`;
+    
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        let whatsappUrl = '';
+        if (isIOS) {
+            whatsappUrl = `whatsapp://send?text=${fullMessage}`;
+        } else if (isAndroid) {
+            whatsappUrl = `intent://send?text=${fullMessage}#Intent;package=com.whatsapp;scheme=whatsapp;end;`;
+        }
+        window.location.href = whatsappUrl;
+        setTimeout(() => {
+            window.open(`https://wa.me/?text=${fullMessage}`, '_blank');
+        }, 1000);
+    } else {
+        window.open(`https://web.whatsapp.com/send?text=${fullMessage}`, '_blank', 'width=800,height=600');
+    }
+}
+
+function shareOnFacebook() {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareConfig.absoluteUrl)}`, '_blank', 'width=600,height=400');
+}
+
+function shareOnTwitter() {
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareConfig.title)}&url=${encodeURIComponent(shareConfig.absoluteUrl)}`, '_blank', 'width=600,height=400');
+}
+
+function shareOnLinkedIn() {
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareConfig.absoluteUrl)}`, '_blank', 'width=600,height=400');
+}
+
+function copyToClipboard() {
+    navigator.clipboard.writeText(shareConfig.absoluteUrl).then(() => {
+        const btn = document.getElementById('copyBtn');
+        const originalHTML = btn.innerHTML;
+        btn.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>';
+        setTimeout(() => {
+            btn.innerHTML = originalHTML;
+        }, 2000);
+    });
+}
+
+// ============================================
+// READING PROGRESS
+// ============================================
+window.addEventListener('scroll', function() {
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    const progressBar = document.getElementById('readingProgress');
+    const percentSpan = document.getElementById('progressPercent');
+    if (progressBar) {
+        progressBar.style.width = scrolled + '%';
+        if (percentSpan) percentSpan.textContent = Math.round(scrolled) + '%';
+    }
+});
+
+// ============================================
+// AUDIO PLAYER
+// ============================================
+{% if article.emissionUrl %}
+document.addEventListener('DOMContentLoaded', function() {
+    const audioPlayer = document.getElementById('audioPlayer');
+    const playButton = document.getElementById('playButton');
+    const playIcon = document.getElementById('playIcon');
+    const pauseIcon = document.getElementById('pauseIcon');
+    const progressFill = document.getElementById('progressFill');
+    const progressContainer = document.getElementById('progressContainer');
+    const currentTimeSpan = document.getElementById('currentTime');
+    const durationSpan = document.getElementById('duration');
+    const speedBtn = document.getElementById('speedBtn');
+    
+    let speeds = [0.75, 1, 1.25, 1.5, 2];
+    let currentSpeed = 1;
+    
+    function formatTime(seconds) {
+        if (isNaN(seconds)) return '0:00';
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+    
+    if (audioPlayer) {
+        audioPlayer.addEventListener('loadedmetadata', function() {
+            durationSpan.textContent = formatTime(audioPlayer.duration);
+        });
+        
+        playButton.addEventListener('click', function() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+            } else {
+                audioPlayer.pause();
+                playIcon.classList.remove('hidden');
+                pauseIcon.classList.add('hidden');
+            }
+        });
+        
+        audioPlayer.addEventListener('timeupdate', function() {
+            const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            progressFill.style.width = progress + '%';
+            currentTimeSpan.textContent = formatTime(audioPlayer.currentTime);
+        });
+        
+        if (progressContainer) {
+            progressContainer.addEventListener('click', function(e) {
+                const rect = progressContainer.getBoundingClientRect();
+                const pos = (e.clientX - rect.left) / rect.width;
+                audioPlayer.currentTime = pos * audioPlayer.duration;
+            });
+        }
+        
+        audioPlayer.addEventListener('ended', function() {
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+            progressFill.style.width = '0%';
+            currentTimeSpan.textContent = '0:00';
+        });
+        
+        speedBtn.addEventListener('click', function() {
+            let currentIndex = speeds.indexOf(currentSpeed);
+            currentIndex = (currentIndex + 1) % speeds.length;
+            currentSpeed = speeds[currentIndex];
+            audioPlayer.playbackRate = currentSpeed;
+            speedBtn.textContent = currentSpeed + 'x';
+        });
+    }
+});
+{% endif %}
+</script>
+
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.prose h1, .prose h2, .prose h3 {
+    font-weight: 700;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #1f2937;
+}
+.prose p {
+    color: #4b5563;
+    line-height: 1.625;
+    margin-bottom: 1rem;
+}
+.prose img {
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin: 1rem auto;
+}
+.prose blockquote {
+    border-left: 4px solid #d97706;
+    padding-left: 1rem;
+    font-style: italic;
+    color: #6b7280;
+    margin: 1rem 0;
+}
+.prose ul, .prose ol {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+.prose li {
+    color: #4b5563;
+    margin-bottom: 0.25rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+@keyframes zoomIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.fade-in { animation: fadeIn 0.5s ease-out; }
+.slide-in-left { animation: slideInLeft 0.5s ease-out; }
+.slide-in-right { animation: slideInRight 0.5s ease-out; }
+.zoom-in { animation: zoomIn 0.5s ease-out; }
+</style>
+{% endblock %}

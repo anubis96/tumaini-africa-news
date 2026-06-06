@@ -1,0 +1,178 @@
+{# templates/single_article_public/_comment_fixed.html.twig #}
+
+<!-- Section des commentaires -->
+<div class="mt-12 bg-white rounded-2xl shadow-lg p-6 md:p-8">
+    <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-3">
+        <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+        </svg>
+        Commentaires ({{ comments|length }})
+    </h3>
+
+    <!-- Formulaire d'ajout de commentaire - Version HTML pure -->
+    <div class="mb-10 bg-gradient-to-r from-amber-50 to-orange-50 rounded-xl p-6">
+        <h4 class="text-lg font-semibold text-gray-800 mb-4">Laisser un commentaire</h4>
+        
+        {# Affichage des messages flash #}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="mb-4 p-3 rounded-lg {% if label == 'success' %}bg-green-100 text-green-700{% else %}bg-red-100 text-red-700{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+        
+        <form method="POST" 
+              action="{{ path('app_comment_add', {'slug': article.slug}) }}" 
+              class="space-y-4" 
+              id="comment-form"
+              onsubmit="return validateForm(this)">
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Prénom *</label>
+                    <input type="text" name="firstname" id="firstname" required 
+                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all"
+                           placeholder="Votre prénom">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nom *</label>
+                    <input type="text" name="lastname" id="lastname" required 
+                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all"
+                           placeholder="Votre nom">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Téléphone *</label>
+                    <input type="tel" name="phone" id="phone" required 
+                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all"
+                           placeholder="+243 XXX XXX XXX ou 0XXX XXX XXX">
+                    <p class="text-xs text-gray-400 mt-1">Format: +243XXXXXXX ou 0XXXXXXXX (RDC)</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email (optionnel)</label>
+                    <input type="email" name="email" id="email" 
+                           class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all"
+                           placeholder="votre@email.com">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Commentaire *</label>
+                <textarea name="content" id="content" rows="5" required 
+                          class="w-full px-4 py-2 rounded-lg border border-gray-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all resize-none"
+                          placeholder="Partagez votre pensée..."></textarea>
+                <p class="text-xs text-gray-400 mt-1">Maximum 2000 caractères</p>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+                <div class="flex items-center gap-2">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <span class="text-xs text-gray-500">Vos informations ne seront pas partagées</span>
+                </div>
+                <button type="submit" 
+                        class="px-6 py-2.5 bg-gradient-to-r from-amber-600 to-orange-500 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300">
+                    Publier le commentaire
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Liste des commentaires approuvés -->
+    <div class="space-y-6" id="comments-list">
+        {% if comments|length > 0 %}
+            {% for comment in comments %}
+                <div class="border-b border-gray-100 pb-6 last:border-0 comment-item" data-comment-id="{{ comment.id }}">
+                    <div class="flex items-start gap-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-10 h-10 rounded-full bg-violet-500 flex items-center justify-center text-white font-bold shadow-md">
+                                {{ comment.firstname|first }}{{ comment.lastname|first }}
+                            </div>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                                <div>
+                                    <span class="font-semibold text-gray-800">{{ comment.firstname }} {{ comment.lastname }}</span>
+                                    <span class="text-xs text-gray-400 ml-2">•</span>
+                                    <span class="text-xs text-gray-400 ml-2">
+                                        {{ comment.createdAt|date('d/m/Y à H:i') }}
+                                    </span>
+                                </div>
+                                <button onclick="likeComment({{ comment.id }})" 
+                                        class="like-button text-xs text-gray-400 hover:text-amber-600 transition-colors flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
+                                    </svg>
+                                    <span class="like-count">{{ comment.likes }}</span>
+                                </button>
+                            </div>
+                            <p class="text-gray-700 leading-relaxed">{{ comment.content|raw }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="text-center py-8">
+                <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                </svg>
+                <p class="text-gray-500">Soyez le premier à laisser un commentaire</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function validateForm(form) {
+    // Validation supplémentaire avant envoi
+    const phone = form.phone.value;
+    const phonePattern = /^(?:(?:\+243|0)[1-9]\d{7,8}|(?:\+|00)[1-9]\d{7,14})$/;
+    
+    if (!phonePattern.test(phone)) {
+        alert('Veuillez entrer un numéro de téléphone valide (RDC: +243XXXXXXX ou 0XXXXXXXX)');
+        return false;
+    }
+    
+    return true;
+}
+
+function likeComment(commentId) {
+    fetch(`/comment/like/${commentId}`, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const commentDiv = document.querySelector(`.comment-item[data-comment-id="${commentId}"]`);
+        if (commentDiv) {
+            const likeCountSpan = commentDiv.querySelector('.like-count');
+            if (likeCountSpan) {
+                likeCountSpan.textContent = data.likes;
+            }
+            const likeButton = commentDiv.querySelector('.like-button');
+            if (likeButton) {
+                likeButton.classList.add('text-amber-600');
+                setTimeout(() => {
+                    likeButton.classList.remove('text-amber-600');
+                }, 500);
+            }
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+// Debug: afficher dans la console quand le formulaire est soumis
+document.getElementById('comment-form')?.addEventListener('submit', function(e) {
+    console.log('Formulaire soumis !');
+    console.log('Action:', this.action);
+    console.log('Method:', this.method);
+    console.log('Data:', new FormData(this));
+});
+</script>

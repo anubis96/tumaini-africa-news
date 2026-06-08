@@ -1,0 +1,230 @@
+{# templates/admin/association_manager/a_offre/index.html.twig #}
+{% extends 'admin/association_manager/layout.html.twig' %}
+
+{% block association_title %}Offres - Association{% endblock %}
+
+{% block association_content %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    {# En-tête avec actions #}
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <i class="fas fa-briefcase text-amber-500"></i>
+                Gestion des offres d'emploi
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {{ a_offres|length }} offre(s) au total
+            </p>
+        </div>
+        <a href="{{ path('app_a_offre_new') }}" 
+           class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-5 py-2.5 rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
+            <i class="fas fa-plus"></i>
+            Nouvelle offre
+        </a>
+    </div>
+
+    {# Barre de recherche et filtres #}
+    <div class="px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        <div class="flex flex-col sm:flex-row gap-3">
+            <div class="relative flex-1">
+                <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="searchInput" 
+                       class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                       placeholder="Rechercher une offre...">
+            </div>
+            <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 dark:bg-gray-800 dark:border-gray-600">
+                <option value="">Tous les statuts</option>
+                {% for key, label in statuts_list %}
+                    <option value="{{ key }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+            <select id="typeFilter" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 dark:bg-gray-800 dark:border-gray-600">
+                <option value="">Tous les types</option>
+                {% for key, label in types_list %}
+                    <option value="{{ key }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    {# Tableau - le reste du code reste identique #}
+    <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+            <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                    <th class="px-6 py-3">Icône</th>
+                    <th class="px-6 py-3">Titre</th>
+                    <th class="px-6 py-3 hidden lg:table-cell">Résumé</th>
+                    <th class="px-6 py-3">Type</th>
+                    <th class="px-6 py-3 hidden md:table-cell">Lieu</th>
+                    <th class="px-6 py-3">Date limite</th>
+                    <th class="px-6 py-3">Statut</th>
+                    <th class="px-6 py-3 text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for a_offre in a_offres %}
+                <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition cursor-pointer offre-row" 
+                    data-status="{{ a_offre.statut }}"
+                    data-type="{{ a_offre.type }}"
+                    onclick="window.location='{{ path('app_a_offre_show', {'id': a_offre.id}) }}'">
+                    <td class="px-6 py-4 text-2xl">
+                        {{ a_offre.icon ?: '📢' }}
+                    </td>
+                    <td class="px-6 py-4 font-medium text-gray-900 dark:text-white">
+                        {{ a_offre.titre|slice(0, 60) }}{{ a_offre.titre|length > 60 ? '...' : '' }}
+                    </td>
+                    <td class="px-6 py-4 hidden lg:table-cell max-w-xs truncate">
+                        {{ a_offre.resume|slice(0, 80) }}{{ a_offre.resume|length > 80 ? '...' : '' }}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
+                            {{ a_offre.getTypeLabel() }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 hidden md:table-cell">
+                        <i class="fas fa-map-marker-alt text-gray-400 mr-1"></i>
+                        {{ a_offre.getLieuLabel() }}
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {% set dateDiff = a_offre.dateLimite|date('U') - 'now'|date('U') %}
+                        {% set daysLeft = dateDiff / 86400 %}
+                        {% if daysLeft < 0 %}
+                            <span class="text-red-600">Expirée</span>
+                        {% elseif daysLeft < 7 %}
+                            <span class="text-orange-600">{{ a_offre.dateLimite|date('d/m/Y') }}</span>
+                        {% else %}
+                            {{ a_offre.dateLimite|date('d/m/Y') }}
+                        {% endif %}
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full {{ a_offre.getStatutBadgeClass() }}">
+                            {% if a_offre.statut == 'ouvert' %}
+                                <i class="fas fa-check-circle mr-1"></i>
+                            {% elseif a_offre.statut == 'ferme' %}
+                                <i class="fas fa-times-circle mr-1"></i>
+                            {% elseif a_offre.statut == 'en_attente' %}
+                                <i class="fas fa-clock mr-1"></i>
+                            {% else %}
+                                <i class="fas fa-check-double mr-1"></i>
+                            {% endif %}
+                            {{ a_offre.getStatutLabel() }}
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-center whitespace-nowrap">
+                        <div class="flex justify-center gap-2" onclick="event.stopPropagation()">
+                            <a href="{{ path('app_a_offre_show', {'id': a_offre.id}) }}" 
+                               class="text-blue-600 hover:text-blue-800 p-1.5 rounded-lg hover:bg-blue-50 transition"
+                               title="Voir">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ path('app_a_offre_edit', {'id': a_offre.id}) }}" 
+                               class="text-amber-600 hover:text-amber-800 p-1.5 rounded-lg hover:bg-amber-50 transition"
+                               title="Modifier">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button type="button" 
+                                    onclick="confirmDelete({{ a_offre.id }}, '{{ a_offre.titre|e('js') }}')"
+                                    class="text-red-600 hover:text-red-800 p-1.5 rounded-lg hover:bg-red-50 transition"
+                                    title="Supprimer">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                        <i class="fas fa-inbox text-4xl mb-3 block"></i>
+                        Aucune offre d'emploi trouvée
+                        <div class="mt-3">
+                            <a href="{{ path('app_a_offre_new') }}" class="text-amber-600 hover:underline">
+                                Créer la première offre →
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{# Modal de confirmation de suppression #}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Confirmer la suppression</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6" id="deleteMessage">
+                Êtes-vous sûr de vouloir supprimer cette offre ?
+            </p>
+            <form id="deleteForm" method="post" style="display: inline;">
+                <input type="hidden" name="_token" value="">
+                <div class="flex gap-3 justify-center">
+                    <button type="button" onclick="closeDeleteModal()" 
+                            class="px-5 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" 
+                            class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                        Supprimer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Recherche et filtres
+    const searchInput = document.getElementById('searchInput');
+    const statusFilter = document.getElementById('statusFilter');
+    const typeFilter = document.getElementById('typeFilter');
+    const rows = document.querySelectorAll('.offre-row');
+
+    function filterTable() {
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        const statusValue = statusFilter ? statusFilter.value : '';
+        const typeValue = typeFilter ? typeFilter.value : '';
+
+        rows.forEach(row => {
+            const title = row.querySelector('td:nth-child(2)')?.innerText.toLowerCase() || '';
+            const resume = row.querySelector('td:nth-child(3)')?.innerText.toLowerCase() || '';
+            const rowStatus = row.getAttribute('data-status');
+            const rowType = row.getAttribute('data-type');
+
+            const matchesSearch = title.includes(searchTerm) || resume.includes(searchTerm);
+            const matchesStatus = !statusValue || rowStatus === statusValue;
+            const matchesType = !typeValue || rowType === typeValue;
+
+            row.style.display = (matchesSearch && matchesStatus && matchesType) ? '' : 'none';
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener('keyup', filterTable);
+    if (statusFilter) statusFilter.addEventListener('change', filterTable);
+    if (typeFilter) typeFilter.addEventListener('change', filterTable);
+
+    // Suppression modale
+    let deleteUrl = '';
+    function confirmDelete(id, title) {
+        deleteUrl = "{{ path('app_a_offre_delete', {'id': 0}) }}".replace('0', id);
+        document.getElementById('deleteMessage').innerHTML = `Êtes-vous sûr de vouloir supprimer l'offre <strong>"${title}"</strong> ? Cette action est irréversible.`;
+        document.getElementById('deleteForm').action = deleteUrl;
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+    }
+
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>
+{% endblock %}

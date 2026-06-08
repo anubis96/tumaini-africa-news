@@ -1,0 +1,184 @@
+{% extends 'admin/association_manager/layout.html.twig' %}
+
+{% block association_title %}Membres - Association{% endblock %}
+
+{% block association_content %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    {# En-tête avec actions #}
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <i class="fas fa-users text-amber-500"></i>
+                Gestion des membres
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {{ a_membres|length }} membre(s) au total
+            </p>
+        </div>
+        <a href="{{ path('app_a_membre_new') }}" 
+           class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-5 py-2.5 rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
+            <i class="fas fa-plus"></i>
+            Nouveau membre
+        </a>
+    </div>
+
+    {# Barre de recherche #}
+    <div class="px-6 py-3 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900">
+        <div class="relative">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input type="text" id="searchInput" 
+                   class="w-full sm:w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                   placeholder="Rechercher un membre...">
+        </div>
+    </div>
+
+    {# Grille des membres #}
+    <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for a_membre in a_membres %}
+                <div class="bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden membre-card" 
+                     data-name="{{ a_membre.nom|lower }}"
+                     data-poste="{{ a_membre.poste|lower }}"
+                     data-specialite="{{ a_membre.specialite|lower }}">
+                    {# En-tête coloré #}
+                    <div class="h-24" style="background: linear-gradient(135deg, {{ a_membre.couleur }} 0%, {{ a_membre.couleur }}CC 100%);"></div>
+                    
+                    {# Avatar #}
+                    <div class="relative px-6">
+                        <div class="absolute -top-12 left-6">
+                            <div class="w-24 h-24 rounded-full border-4 border-white dark:border-gray-800 shadow-lg flex items-center justify-center text-white text-2xl font-bold"
+                                 style="background-color: {{ a_membre.couleur }};">
+                                {{ a_membre.initiales ?: a_membre.nom|slice(0, 2)|upper }}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {# Contenu #}
+                    <div class="p-6 pt-16">
+                        <h3 class="text-xl font-bold text-gray-800 dark:text-white">{{ a_membre.nom }}</h3>
+                        <p class="text-amber-600 dark:text-amber-400 font-medium text-sm mt-1">{{ a_membre.poste }}</p>
+                        
+                        {% if a_membre.specialite %}
+                            <div class="mt-2">
+                                <span class="inline-flex items-center gap-1 px-2 py-1 text-xs rounded-full bg-amber-100 text-amber-700">
+                                    <i class="fas fa-star text-xs"></i>
+                                    {{ a_membre.specialite }}
+                                </span>
+                            </div>
+                        {% endif %}
+                        
+                        {% if a_membre.anciennete %}
+                            <div class="mt-3 flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Depuis {{ a_membre.anciennete }}</span>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="mt-4 flex items-center gap-3">
+                            <div class="flex-1">
+                                <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+                                    <i class="fas fa-envelope mr-1"></i>{{ a_membre.email }}
+                                </p>
+                            </div>
+                            <div class="flex gap-2" onclick="event.stopPropagation()">
+                                <a href="{{ path('app_a_membre_show', {'id': a_membre.id}) }}" 
+                                   class="text-blue-600 hover:text-blue-800 p-1.5 rounded-lg hover:bg-blue-50 transition"
+                                   title="Voir">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ path('app_a_membre_edit', {'id': a_membre.id}) }}" 
+                                   class="text-amber-600 hover:text-amber-800 p-1.5 rounded-lg hover:bg-amber-50 transition"
+                                   title="Modifier">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" 
+                                        onclick="confirmDelete({{ a_membre.id }}, '{{ a_membre.nom|e('js') }}')"
+                                        class="text-red-600 hover:text-red-800 p-1.5 rounded-lg hover:bg-red-50 transition"
+                                        title="Supprimer">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-12 text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-users-slash text-4xl mb-3 block"></i>
+                    Aucun membre trouvé
+                    <div class="mt-3">
+                        <a href="{{ path('app_a_membre_new') }}" class="text-amber-600 hover:underline">
+                            Ajouter le premier membre →
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{# Modal de confirmation de suppression #}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Confirmer la suppression</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6" id="deleteMessage"></p>
+            <form id="deleteForm" method="post" style="display: inline;">
+                <input type="hidden" name="_token" value="">
+                <div class="flex gap-3 justify-center">
+                    <button type="button" onclick="closeDeleteModal()" 
+                            class="px-5 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+                        Annuler
+                    </button>
+                    <button type="submit" 
+                            class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                        Supprimer
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Recherche
+    const searchInput = document.getElementById('searchInput');
+    const cards = document.querySelectorAll('.membre-card');
+
+    function filterCards() {
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name') || '';
+            const poste = card.getAttribute('data-poste') || '';
+            const specialite = card.getAttribute('data-specialite') || '';
+            
+            const matches = name.includes(searchTerm) || poste.includes(searchTerm) || specialite.includes(searchTerm);
+            card.style.display = matches ? '' : 'none';
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener('keyup', filterCards);
+
+    // Suppression modale
+    let deleteUrl = '';
+    function confirmDelete(id, name) {
+        deleteUrl = "{{ path('app_a_membre_delete', {'id': 0}) }}".replace('0', id);
+        document.getElementById('deleteMessage').innerHTML = `Êtes-vous sûr de vouloir supprimer le membre <strong>"${name}"</strong> ? Cette action est irréversible.`;
+        document.getElementById('deleteForm').action = deleteUrl;
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+    }
+
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>
+{% endblock %}

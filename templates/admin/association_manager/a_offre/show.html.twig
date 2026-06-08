@@ -1,0 +1,182 @@
+{% extends 'admin/association_manager/layout.html.twig' %}
+
+{% block association_title %}Offres - Association{% endblock %}
+
+{% block association_content %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    {# En-tête #}
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-800">
+        <div class="flex items-center gap-4">
+            <div class="text-5xl">{{ a_offre.icon ?: '📢' }}</div>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ a_offre.titre }}</h1>
+                <p class="text-gray-600 dark:text-gray-400 mt-1">{{ a_offre.resume }}</p>
+            </div>
+        </div>
+    </div>
+
+    {# Contenu #}
+    <div class="p-6">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {# Colonne gauche - Description #}
+            <div class="lg:col-span-2 space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                        <i class="fas fa-align-left text-amber-500"></i>
+                        Description du poste
+                    </h3>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ a_offre.description }}</p>
+                    </div>
+                </div>
+
+                {% if a_offre.compentences %}
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                        <i class="fas fa-code-branch text-amber-500"></i>
+                        Compétences requises
+                    </h3>
+                    <div class="flex flex-wrap gap-2">
+                        {% for competence in a_offre.compentences %}
+                            <span class="px-3 py-1 text-sm bg-amber-100 text-amber-700 rounded-full">
+                                <i class="fas fa-check-circle mr-1 text-xs"></i>{{ competence }}
+                            </span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            {# Colonne droite - Informations #}
+            <div class="space-y-4">
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                    <h4 class="font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                        <i class="fas fa-info-circle text-amber-500"></i>
+                        Informations
+                    </h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">
+                                <i class="fas fa-tag mr-2 text-amber-500"></i>Type
+                            </span>
+                            <span class="font-medium px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
+                                {{ a_offre.getTypeLabel() }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">
+                                <i class="fas fa-map-marker-alt mr-2 text-amber-500"></i>Lieu
+                            </span>
+                            <span class="font-medium">{{ a_offre.getLieuLabel() }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">
+                                <i class="fas fa-calendar-alt mr-2 text-amber-500"></i>Date limite
+                            </span>
+                            <span class="font-medium {% set dateDiff = a_offre.dateLimite|date('U') - 'now'|date('U') %}{% if dateDiff < 0 %}text-red-600{% elseif dateDiff < 604800 %}text-orange-600{% endif %}">
+                                {{ a_offre.dateLimite|date('d/m/Y') }}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">
+                                <i class="fas fa-graduation-cap mr-2 text-amber-500"></i>Formation
+                            </span>
+                            <span class="font-medium">{{ a_offre.formation ?: 'Non spécifiée' }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">
+                                <i class="fas fa-briefcase mr-2 text-amber-500"></i>Expérience
+                            </span>
+                            <span class="font-medium">{{ a_offre.experience ?: 'Non spécifiée' }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600 dark:text-gray-400">
+                                <i class="fas fa-flag-checkered mr-2 text-amber-500"></i>Statut
+                            </span>
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full {{ a_offre.getStatutBadgeClass() }}">
+                                {{ a_offre.getStatutLabel() }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Actions #}
+        <div class="flex flex-wrap justify-between items-center gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <a href="{{ path('app_a_offre_index') }}" 
+               class="px-5 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+            <div class="flex gap-3">
+                <a href="{{ path('app_a_offre_edit', {'id': a_offre.id}) }}" 
+                   class="px-5 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition flex items-center gap-2">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+                <button type="button" 
+                        onclick="confirmDelete({{ a_offre.id }}, '{{ a_offre.titre|e('js') }}')"
+                        class="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Formulaire de suppression caché #}
+<form id="deleteForm" method="post" action="" style="display: none;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ a_offre.id) }}" id="deleteToken">
+</form>
+
+{# Modal de confirmation #}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Confirmer la suppression</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6" id="deleteMessage"></p>
+            <div class="flex gap-3 justify-center">
+                <button type="button" onclick="closeDeleteModal()" 
+                        class="px-5 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+                    Annuler
+                </button>
+                <button type="button" onclick="submitDelete()" 
+                        class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deleteId = null;
+    
+    function confirmDelete(id, title) {
+        deleteId = id;
+        document.getElementById('deleteMessage').innerHTML = `Êtes-vous sûr de vouloir supprimer l'offre <strong>"${title}"</strong> ? Cette action est irréversible.`;
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+        deleteId = null;
+    }
+
+    function submitDelete() {
+        if (deleteId) {
+            const form = document.getElementById('deleteForm');
+            form.action = "{{ path('app_a_offre_delete', {'id': 0}) }}".replace('0', deleteId);
+            form.submit();
+        }
+    }
+
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>
+{% endblock %}

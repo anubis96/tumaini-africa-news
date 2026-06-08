@@ -1,0 +1,196 @@
+{% extends 'admin/association_manager/layout.html.twig' %}
+
+{% block association_title %}Membres - Association{% endblock %}
+
+{% block association_content %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    {# En-tête avec bannière colorée #}
+    <div class="h-32" style="background: linear-gradient(135deg, {{ a_membre.couleur }} 0%, {{ a_membre.couleur }}CC 100%);"></div>
+    
+    {# Contenu #}
+    <div class="relative px-6 pb-6">
+        {# Avatar #}
+        <div class="absolute -top-12 left-6">
+            <div class="w-24 h-24 rounded-full border-4 border-white dark:border-gray-800 shadow-lg flex items-center justify-center text-white text-2xl font-bold"
+                 style="background-color: {{ a_membre.couleur }};">
+                {{ a_membre.initiales ?: a_membre.nom|slice(0, 2)|upper }}
+            </div>
+        </div>
+        
+        {# Actions #}
+        <div class="flex justify-end gap-3 pt-4">
+            <a href="{{ path('app_a_membre_edit', {'id': a_membre.id}) }}" 
+               class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition flex items-center gap-2">
+                <i class="fas fa-edit"></i> Modifier
+            </a>
+            <button type="button" 
+                    onclick="confirmDelete({{ a_membre.id }}, '{{ a_membre.nom|e('js') }}')"
+                    class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2">
+                <i class="fas fa-trash"></i> Supprimer
+            </button>
+        </div>
+        
+        {# Informations #}
+        <div class="mt-16">
+            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ a_membre.nom }}</h1>
+            <p class="text-amber-600 dark:text-amber-400 font-medium text-lg mt-1">{{ a_membre.poste }}</p>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
+                {# Colonne gauche - Informations personnelles #}
+                <div class="lg:col-span-2 space-y-4">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                            <i class="fas fa-user-circle text-amber-500"></i>
+                            Biographie
+                        </h3>
+                        <p class="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{{ a_membre.bio }}</p>
+                    </div>
+                </div>
+                
+                {# Colonne droite - Détails #}
+                <div class="space-y-4">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                            <i class="fas fa-info-circle text-amber-500"></i>
+                            Informations
+                        </h4>
+                        <div class="space-y-3">
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">
+                                    <i class="fas fa-star mr-2 text-amber-500"></i>Spécialité
+                                </span>
+                                <span class="font-medium">{{ a_membre.specialite }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-600 dark:text-gray-400">
+                                    <i class="fas fa-calendar mr-2 text-amber-500"></i>Membre depuis
+                                </span>
+                                <span class="font-medium">{{ a_membre.anciennete }}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-600 dark:text-gray-400">
+                                    <i class="fas fa-palette mr-2 text-amber-500"></i>Couleur
+                                </span>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full" style="background-color: {{ a_membre.couleur }}"></div>
+                                    <span class="font-mono text-sm">{{ a_membre.couleur }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                            <i class="fas fa-address-card text-amber-500"></i>
+                            Contact
+                        </h4>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-gray-600 dark:text-gray-400 text-sm block">
+                                    <i class="fas fa-envelope mr-2 text-amber-500"></i>Email
+                                </span>
+                                <a href="mailto:{{ a_membre.email }}" class="text-blue-600 hover:underline break-all">{{ a_membre.email }}</a>
+                            </div>
+                            {% if a_membre.telephone %}
+                            <div>
+                                <span class="text-gray-600 dark:text-gray-400 text-sm block">
+                                    <i class="fas fa-phone mr-2 text-amber-500"></i>Téléphone
+                                </span>
+                                <a href="tel:{{ a_membre.telephone }}" class="text-blue-600 hover:underline">{{ a_membre.telephone }}</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    
+                    {# Réseaux sociaux #}
+                    {% if a_membre.linkedin or a_membre.twitter %}
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                        <h4 class="font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                            <i class="fas fa-share-alt text-amber-500"></i>
+                            Réseaux sociaux
+                        </h4>
+                        <div class="flex gap-3">
+                            {% if a_membre.linkedin %}
+                                <a href="{{ a_membre.linkedin }}" target="_blank" class="text-blue-700 hover:text-blue-900 transition">
+                                    <i class="fab fa-linkedin text-2xl"></i>
+                                </a>
+                            {% endif %}
+                            {% if a_membre.twitter %}
+                                <a href="{{ a_membre.twitter }}" target="_blank" class="text-sky-500 hover:text-sky-700 transition">
+                                    <i class="fab fa-twitter text-2xl"></i>
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        {# Retour #}
+        <div class="mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <a href="{{ path('app_a_membre_index') }}" 
+               class="inline-flex items-center gap-2 px-5 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+        </div>
+    </div>
+</div>
+
+{# Formulaire de suppression caché #}
+<form id="deleteForm" method="post" action="" style="display: none;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ a_membre.id) }}" id="deleteToken">
+</form>
+
+{# Modal de confirmation #}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Confirmer la suppression</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6" id="deleteMessage"></p>
+            <div class="flex gap-3 justify-center">
+                <button type="button" onclick="closeDeleteModal()" 
+                        class="px-5 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+                    Annuler
+                </button>
+                <button type="button" onclick="submitDelete()" 
+                        class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deleteId = null;
+    
+    function confirmDelete(id, name) {
+        deleteId = id;
+        document.getElementById('deleteMessage').innerHTML = `Êtes-vous sûr de vouloir supprimer le membre <strong>"${name}"</strong> ? Cette action est irréversible.`;
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+        deleteId = null;
+    }
+
+    function submitDelete() {
+        if (deleteId) {
+            const form = document.getElementById('deleteForm');
+            form.action = "{{ path('app_a_membre_delete', {'id': 0}) }}".replace('0', deleteId);
+            form.submit();
+        }
+    }
+
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>
+{% endblock %}

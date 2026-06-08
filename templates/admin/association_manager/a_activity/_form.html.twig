@@ -1,0 +1,102 @@
+{# templates/admin/association_manager/a_activity/_form.html.twig #}
+{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+    {# Erreurs du formulaire #}
+    {% if form_errors(form) %}
+        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
+            <p class="font-bold">Erreur</p>
+            <p>{{ form_errors(form) }}</p>
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {# Colonne gauche #}
+        <div class="space-y-5">
+            {# Titre #}
+            <div>
+                {{ form_label(form.title, 'Titre', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.title, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'placeholder': 'Entrez le titre de l\'activité'}}) }}
+                {{ form_errors(form.title) }}
+            </div>
+
+            {# Résumé #}
+            <div>
+                {{ form_label(form.resume, 'Résumé', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.resume, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'rows': 2, 'placeholder': 'Court résumé de l\'activité'}}) }}
+                {{ form_errors(form.resume) }}
+            </div>
+
+            {# Description #}
+            <div>
+                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.description, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'rows': 5, 'placeholder': 'Description détaillée de l\'activité'}}) }}
+                {{ form_errors(form.description) }}
+            </div>
+
+            {# Date #}
+            <div>
+                {{ form_label(form.date, 'Date', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.date, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white'}}) }}
+                {{ form_errors(form.date) }}
+            </div>
+        </div>
+
+        {# Colonne droite #}
+        <div class="space-y-5">
+            {# Lieu #}
+            <div>
+                {{ form_label(form.lieu, 'Lieu', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.lieu, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'placeholder': 'Ex: Uvira, Sud-Kivu'}}) }}
+                {{ form_errors(form.lieu) }}
+            </div>
+
+            {# Statut #}
+            <div>
+                {{ form_label(form.status, 'Statut', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.status, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white'}}) }}
+                {{ form_errors(form.status) }}
+            </div>
+
+            {# Icône/Image #}
+            <div>
+                {{ form_label(form.imageIcon, 'Icône', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.imageIcon, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'placeholder': 'Ex: 📚, 🛡️, 🌱'}}) }}
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Utilisez un emoji ou une icône FontAwesome</p>
+                {{ form_errors(form.imageIcon) }}
+            </div>
+
+            {# Participants #}
+            <div>
+                {{ form_label(form.participants, 'Nombre de participants', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.participants, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'type': 'number'}}) }}
+                {{ form_errors(form.participants) }}
+            </div>
+
+            {# Bénéficiaires #}
+            <div>
+                {{ form_label(form.beneficiaires, 'Bénéficiaires', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.beneficiaires, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'placeholder': 'Ex: 5 écoles, 12 quartiers'}}) }}
+                {{ form_errors(form.beneficiaires) }}
+            </div>
+
+            {# Catégories #}
+            <div>
+                {{ form_label(form.categories, 'Catégorie', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.categories, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white'}}) }}
+                {{ form_errors(form.categories) }}
+            </div>
+        </div>
+    </div>
+
+    {# Boutons d'action #}
+    <div class="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
+        <a href="{{ path('app_a_activity_index') }}" 
+           class="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+            <i class="fas fa-arrow-left mr-2"></i>Retour
+        </a>
+        <button type="submit" 
+                class="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
+            <i class="fas fa-save"></i>
+            {{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+{{ form_end(form) }}

@@ -3,10 +3,8 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
-use App\Entity\User;
 use App\Form\ArticleForm;
 use App\Repository\ArticleRepository;
-use App\Repository\UserRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -20,16 +18,6 @@ final class ArticleController extends AbstractController
     #[Route(name: 'app_article_index', methods: ['GET'])]
     public function index(ArticleRepository $articleRepository, Request $request, EntityManagerInterface $em): Response
     {
-        /*$user = new User();
-        $user->setFirstname("Olivier");
-        $user->setLastname("Rukabo");
-        $user->setEmail("moiserukabo@gmail.com");
-        $user->setUsername("Olic");
-        $user->setPassword("123456");
-        $user->setRoles(['ROLE_ADMIN', 'ROLE_USER']);
-        
-        $em->persist($user);
-        $em->flush();*/
         $page = $request->query->getInt('page', 1); // Récupère le numéro de page depuis l'URL
         
         $articles = $articleRepository->findAllPaginated($page);

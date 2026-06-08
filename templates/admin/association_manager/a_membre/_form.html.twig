@@ -1,0 +1,185 @@
+{# templates/admin/association_manager/a_membre/_form.html.twig #}
+{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+    {% if form_errors(form) %}
+        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
+            <p class="font-bold">Erreur</p>
+            <p>{{ form_errors(form) }}</p>
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {# Colonne gauche #}
+        <div class="space-y-5">
+            <div>
+                {{ form_label(form.nom, 'Nom complet', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.nom, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white'}}) }}
+                {{ form_errors(form.nom) }}
+            </div>
+
+            <div>
+                {{ form_label(form.poste, 'Poste', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.poste, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white'}}) }}
+                {{ form_errors(form.poste) }}
+            </div>
+
+            <div>
+                {{ form_label(form.specialite, 'Spécialité', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.specialite, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white'}}) }}
+                {{ form_errors(form.specialite) }}
+            </div>
+
+            <div>
+                {{ form_label(form.bio, 'Biographie', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.bio, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'rows': 4}}) }}
+                {{ form_errors(form.bio) }}
+            </div>
+        </div>
+
+        {# Colonne droite #}
+        <div class="space-y-5">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    {{ form_label(form.anciennete, 'Année d\'arrivée', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                    {{ form_widget(form.anciennete, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white'}}) }}
+                    {{ form_errors(form.anciennete) }}
+                </div>
+                <div>
+                    {{ form_label(form.initiales, 'Initiales', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                    {{ form_widget(form.initiales, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'maxlength': 5}}) }}
+                    {{ form_errors(form.initiales) }}
+                </div>
+            </div>
+
+            <div>
+                {{ form_label(form.couleur, 'Couleur', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                <div class="flex gap-3">
+                    {{ form_widget(form.couleur, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'placeholder': '#F59E0B'}}) }}
+                    <div class="w-12 h-10 rounded-lg border border-gray-300" id="colorPreview" style="background-color: #F59E0B"></div>
+                </div>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Code hexadécimal ou nom de couleur CSS</p>
+                {{ form_errors(form.couleur) }}
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    {{ form_label(form.email, 'Email', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white'}}) }}
+                    {{ form_errors(form.email) }}
+                </div>
+                <div>
+                    {{ form_label(form.telephone, 'Téléphone', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                    {{ form_widget(form.telephone, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white'}}) }}
+                    {{ form_errors(form.telephone) }}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    {{ form_label(form.linkedin, 'LinkedIn', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                    {{ form_widget(form.linkedin, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'placeholder': 'https://...'}}) }}
+                    {{ form_errors(form.linkedin) }}
+                </div>
+                <div>
+                    {{ form_label(form.twitter, 'Twitter/X', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                    {{ form_widget(form.twitter, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white', 'placeholder': 'https://...'}}) }}
+                    {{ form_errors(form.twitter) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Aperçu en direct #}
+    <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-700 rounded-lg p-4">
+        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Aperçu</h4>
+        <div class="flex items-center gap-4" id="preview">
+            <div class="w-16 h-16 rounded-full flex items-center justify-center text-white text-xl font-bold" id="previewAvatar">
+                JD
+            </div>
+            <div>
+                <h3 class="font-bold text-gray-800 dark:text-white" id="previewName">John Doe</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400" id="previewPoste">Poste</p>
+                <p class="text-xs text-gray-500 dark:text-gray-500 mt-1" id="previewSpecialite">Spécialité</p>
+            </div>
+        </div>
+    </div>
+
+    {# Boutons d'action #}
+    <div class="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
+        <a href="{{ path('app_a_membre_index') }}" 
+           class="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600">
+            <i class="fas fa-arrow-left mr-2"></i>Retour
+        </a>
+        <button type="submit" 
+                class="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
+            <i class="fas fa-save"></i>
+            {{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+{{ form_end(form) }}
+
+<script>
+    // Aperçu en temps réel
+    document.addEventListener('DOMContentLoaded', function() {
+        const nomInput = document.querySelector('input[id$="_nom"]');
+        const posteInput = document.querySelector('input[id$="_poste"]');
+        const specialiteInput = document.querySelector('input[id$="_specialite"]');
+        const initialesInput = document.querySelector('input[id$="_initiales"]');
+        const couleurInput = document.querySelector('input[id$="_couleur"]');
+        const previewAvatar = document.getElementById('previewAvatar');
+        const previewName = document.getElementById('previewName');
+        const previewPoste = document.getElementById('previewPoste');
+        const previewSpecialite = document.getElementById('previewSpecialite');
+        const colorPreview = document.getElementById('colorPreview');
+
+        function updatePreview() {
+            if (nomInput && nomInput.value) {
+                previewName.textContent = nomInput.value;
+            } else {
+                previewName.textContent = 'John Doe';
+            }
+            
+            if (posteInput && posteInput.value) {
+                previewPoste.textContent = posteInput.value;
+            } else {
+                previewPoste.textContent = 'Poste';
+            }
+            
+            if (specialiteInput && specialiteInput.value) {
+                previewSpecialite.textContent = specialiteInput.value;
+            } else {
+                previewSpecialite.textContent = 'Spécialité';
+            }
+            
+            let initiales = 'JD';
+            if (initialesInput && initialesInput.value) {
+                initiales = initialesInput.value.toUpperCase().slice(0, 2);
+            } else if (nomInput && nomInput.value) {
+                const parts = nomInput.value.trim().split(' ');
+                if (parts.length >= 2) {
+                    initiales = (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+                } else if (parts.length === 1) {
+                    initiales = parts[0].slice(0, 2).toUpperCase();
+                }
+            }
+            previewAvatar.textContent = initiales;
+            
+            let couleur = '#F59E0B';
+            if (couleurInput && couleurInput.value) {
+                couleur = couleurInput.value;
+                previewAvatar.style.backgroundColor = couleur;
+                if (colorPreview) colorPreview.style.backgroundColor = couleur;
+            } else {
+                previewAvatar.style.backgroundColor = couleur;
+                if (colorPreview) colorPreview.style.backgroundColor = couleur;
+            }
+        }
+
+        if (nomInput) nomInput.addEventListener('input', updatePreview);
+        if (posteInput) posteInput.addEventListener('input', updatePreview);
+        if (specialiteInput) specialiteInput.addEventListener('input', updatePreview);
+        if (initialesInput) initialesInput.addEventListener('input', updatePreview);
+        if (couleurInput) couleurInput.addEventListener('input', updatePreview);
+        
+        updatePreview();
+    });
+</script>

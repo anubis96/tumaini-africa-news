@@ -1,0 +1,184 @@
+{% extends 'admin/association_manager/layout.html.twig' %}
+
+{% block association_title %}Catégories - Association{% endblock %}
+
+{% block association_content %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    {# En-tête #}
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-800">
+        <div class="flex items-center gap-4">
+            <div class="text-5xl">{{ a_category.icon ?: '📁' }}</div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ a_category.name }}</h1>
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full" style="background-color: {{ a_category.couleur }}; color: white">
+                        {{ a_category.couleur }}
+                    </span>
+                </div>
+                <p class="text-gray-600 dark:text-gray-400 mt-1">{{ a_category.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    {# Contenu #}
+    <div class="p-6">
+        {# Informations #}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <h3 class="font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-info-circle text-amber-500"></i>
+                    Informations
+                </h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">ID</span>
+                        <span class="font-medium text-gray-800 dark:text-white">{{ a_category.id }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Nom</span>
+                        <span class="font-medium text-gray-800 dark:text-white">{{ a_category.name }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Icône</span>
+                        <span class="text-2xl">{{ a_category.icon ?: '📁' }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-600 dark:text-gray-400">Couleur</span>
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 rounded-full" style="background-color: {{ a_category.couleur }}"></div>
+                            <span class="font-mono text-sm">{{ a_category.couleur }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+                <h3 class="font-semibold text-gray-800 dark:text-white mb-3 flex items-center gap-2">
+                    <i class="fas fa-chart-bar text-amber-500"></i>
+                    Statistiques
+                </h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Nombre d'activités</span>
+                        <span class="px-2 py-1 text-xs font-semibold rounded-full bg-amber-100 text-amber-700">
+                            {{ a_category.aActivities|length }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {# Liste des activités de cette catégorie #}
+        {% if a_category.aActivities is defined and a_category.aActivities|length > 0 %}
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <i class="fas fa-calendar-alt text-amber-500"></i>
+                Activités dans cette catégorie
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for activite in a_category.aActivities %}
+                <a href="{{ path('app_a_activity_show', {'id': activite.id}) }}" 
+                   class="block p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                    <div class="flex items-center gap-3">
+                        <div class="text-2xl">{{ activite.imageIcon ?: '📌' }}</div>
+                        <div class="flex-1 min-w-0">
+                            <p class="font-medium text-gray-800 dark:text-white truncate">{{ activite.title }}</p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ activite.date ? activite.date|date('d/m/Y') : '-' }} • {{ activite.lieu }}
+                            </p>
+                        </div>
+                        {% set statusClass = {
+                            'en_cours': 'bg-green-100 text-green-700',
+                            'planifie': 'bg-blue-100 text-blue-700',
+                            'termine': 'bg-gray-100 text-gray-700'
+                        } %}
+                        <span class="px-2 py-1 text-xs rounded-full {{ statusClass[activite.status]|default('bg-gray-100') }}">
+                            {{ activite.status }}
+                        </span>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        {# Actions #}
+        <div class="flex flex-wrap justify-between items-center gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+            <a href="{{ path('app_a_category_index') }}" 
+               class="px-5 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition flex items-center gap-2">
+                <i class="fas fa-arrow-left"></i> Retour à la liste
+            </a>
+            <div class="flex gap-3">
+                <a href="{{ path('app_a_category_edit', {'id': a_category.id}) }}" 
+                   class="px-5 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition flex items-center gap-2">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+                <button type="button" 
+                        onclick="confirmDelete({{ a_category.id }}, '{{ a_category.name|e('js') }}')"
+                        class="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Formulaire de suppression caché #}
+<form id="deleteForm" method="post" action="" style="display: none;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ a_category.id) }}" id="deleteToken">
+</form>
+
+{# Modal de confirmation #}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-exclamation-triangle text-red-600 text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Confirmer la suppression</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6" id="deleteMessage">
+                Êtes-vous sûr de vouloir supprimer cette catégorie ?
+            </p>
+            <div class="flex gap-3 justify-center">
+                <button type="button" onclick="closeDeleteModal()" 
+                        class="px-5 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+                    Annuler
+                </button>
+                <button type="button" onclick="submitDelete()" 
+                        class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deleteId = null;
+    
+    function confirmDelete(id, name) {
+        deleteId = id;
+        document.getElementById('deleteMessage').innerHTML = `Êtes-vous sûr de vouloir supprimer la catégorie <strong>"${name}"</strong> ? Les activités associées ne seront pas supprimées mais n'auront plus de catégorie.`;
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+        deleteId = null;
+    }
+
+    function submitDelete() {
+        if (deleteId) {
+            const form = document.getElementById('deleteForm');
+            form.action = "{{ path('app_a_category_delete', {'id': 0}) }}".replace('0', deleteId);
+            form.submit();
+        }
+    }
+
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>
+{% endblock %}

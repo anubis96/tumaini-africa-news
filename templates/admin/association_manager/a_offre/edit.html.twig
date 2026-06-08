@@ -1,0 +1,27 @@
+{% extends 'admin/association_manager/layout.html.twig' %}
+
+{% block association_title %}Offres - Association{% endblock %}
+
+{% block association_content %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    {# En-tête #}
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-gray-800 dark:to-gray-800">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-edit text-2xl text-amber-500"></i>
+            <h1 class="text-xl font-bold text-gray-800 dark:text-white">
+                Modifier l'offre : {{ a_offre.titre }}
+            </h1>
+        </div>
+    </div>
+
+    {# Formulaire #}
+    <div class="p-6">
+        {{ include('admin/association_manager/a_offre/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+    </div>
+
+    {# Suppression #}
+    <div class="px-6 pb-6">
+        {{ include('admin/association_manager/a_offre/_delete_form.html.twig') }}
+    </div>
+</div>
+{% endblock %}

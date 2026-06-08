@@ -1,0 +1,94 @@
+# Navigation
+nav:
+  home: Accueil
+  categories: Catégories
+  video: Vidéo
+  podcasts: Podcasts
+  contact: Contact
+  about: À propos
+  association: Association
+  login: Connexion
+
+# Homepage
+home:
+  title: TUMAINI AFRICA NEWS
+  subtitle: L'information au cœur de l'Afrique
+  live: LIVE
+  read_more: Lire la suite
+  latest_news: Dernières nouvelles
+  featured: À la une
+  trending: Tendances
+  most_viewed: Articles les plus consultés
+  explore_categories: Explorer les catégories
+  newsletter: Newsletter
+  newsletter_text: Recevez nos actualités chaque semaine
+  subscribe: S'abonner
+  advertisement: Publicité
+  advertise_space: Espace publicitaire
+  sponsored: Sponsorisé
+  by: Par
+  views: vues
+  min_read: min de lecture
+  article: article
+  articles: articles
+  your_email: Votre email
+  weekly: Les plus consultés de la semaine
+  contact_us: Nous contacter
+
+# Article
+article:
+  published: Publié le
+  updated: Mis à jour le
+  share: Partager
+  facebook: Facebook
+  twitter: Twitter
+  whatsapp: WhatsApp
+  linkedin: LinkedIn
+  copy_link: Copier le lien
+  reading_time: min de lecture
+  author: Journaliste
+  comments: Commentaires
+  leave_comment: Laisser un commentaire
+  firstname: Prénom
+  lastname: Nom
+  phone: Téléphone
+  email: Email
+  your_comment: Votre commentaire
+  publish: Publier
+  related_articles: Articles similaires
+  see_more: Voir plus
+  back_to_list: Retour à la liste
+  delete: Supprimer
+  edit: Modifier
+
+# Comments
+comment:
+  pending: En attente de modération
+  approved: Approuvé
+  rejected: Rejeté
+  approve: Approuver
+  reject: Rejeter
+  success: Votre commentaire a été envoyé et sera publié après modération.
+  error: Erreur lors de l'envoi du commentaire
+  placeholder: Partagez votre pensée...
+  info: Vos informations ne seront pas partagées
+
+# Categories
+category:
+  title: Catégorie
+  all_articles: Tous les articles
+  no_articles: Aucun article dans cette catégorie
+
+# Footer
+footer:
+  not_miss: Ne manquez aucune actualité
+  newsletter: Recevez notre newsletter hebdomadaire directement dans votre boîte mail
+  about_us: À propos de nous
+  quick_links: Liens utiles
+  contact_us: Nous contacter
+  privacy: Politique de confidentialité
+  terms: Conditions d'utilisation
+  advertise: Espace annonceurs
+  careers: Carrières
+  all_rights_reserved: Tous droits réservés
+  description: Tumaini Africa News est votre source d'information de confiance pour l'actualité africaine. Politique, économie, culture, sport et innovations technologiques.

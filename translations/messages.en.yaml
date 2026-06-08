@@ -1,0 +1,94 @@
+# Navigation
+nav:
+  home: Home
+  categories: Categories
+  podcasts: Podcasts
+  video: Video
+  contact: Contact
+  about: About
+  association: Association
+  login: Login
+
+# Homepage
+home:
+  title: TUMAINI AFRICA NEWS
+  subtitle: Information at the heart of Africa
+  live: LIVE
+  read_more: Read more
+  latest_news: Latest news
+  featured: Featured
+  trending: Trending
+  most_viewed: Most viewed articles
+  explore_categories: Explore categories
+  newsletter: Newsletter
+  newsletter_text: Receive our weekly news
+  subscribe: Subscribe
+  advertisement: Advertisement
+  advertise_space: Advertise space
+  sponsored: Sponsored
+  by: By
+  views: views
+  min_read: min read
+  article: article
+  articles: articles
+  your_email: Your email
+  weekly: Most viewed this week
+  contact_us: Contact us
+
+# Article
+article:
+  published: Published on
+  updated: Updated on
+  share: Share
+  facebook: Facebook
+  twitter: Twitter
+  whatsapp: WhatsApp
+  linkedin: LinkedIn
+  copy_link: Copy link
+  reading_time: min read
+  author: Journalist
+  comments: Comments
+  leave_comment: Leave a comment
+  firstname: First name
+  lastname: Last name
+  phone: Phone
+  email: Email
+  your_comment: Your comment
+  publish: Publish
+  related_articles: Related articles
+  see_more: See more
+  back_to_list: Back to list
+  delete: Delete
+  edit: Edit
+
+# Comments
+comment:
+  pending: Pending moderation
+  approved: Approved
+  rejected: Rejected
+  approve: Approve
+  reject: Reject
+  success: Your comment has been sent and will be published after moderation.
+  error: Error sending comment
+  placeholder: Share your thoughts...
+  info: Your information will not be shared
+
+# Categories
+category:
+  title: Category
+  all_articles: All articles
+  no_articles: No articles in this category
+
+# Footer
+footer:
+  not_miss: Don't miss any news
+  newsletter: Receive our weekly newsletter
+  about_us: About us
+  quick_links: Quick links
+  contact_us: Contact us
+  privacy: Privacy policy
+  terms: Terms of use
+  advertise: Advertise with us
+  careers: Careers
+  all_rights_reserved: All rights reserved
+  description: Tumaini Africa News is your trusted source for African news. Politics, economy, culture, sports, and technological innovations....

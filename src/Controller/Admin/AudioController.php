@@ -108,8 +108,40 @@ final class AudioController extends AbstractController
     public function delete(Request $request, Audio $audio, EntityManagerInterface $entityManager): Response
     {
         if ($this->isCsrfTokenValid('delete'.$audio->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($audio);
-            $entityManager->flush();
+            dump('Audio URL avant suppression: ' . $audio->getAudioUrl());
+            dump('Cover avant suppression: ' . $audio->getCover());
+            
+        // Récupérer les chemins des fichiers
+        $audioUrl = $audio->getAudioUrl();
+        $cover = $audio->getCover();
+        
+        // VIDER les propriétés AVANT de supprimer
+        // Utiliser la réflexion pour contourner le typage strict
+        $reflectionProperty = new \ReflectionProperty(Audio::class, 'audioUrl');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($audio, null);
+        
+        $reflectionPropertyCover = new \ReflectionProperty(Audio::class, 'cover');
+        $reflectionPropertyCover->setAccessible(true);
+        $reflectionPropertyCover->setValue($audio, null);
+        
+        // Maintenant supprimer l'entité
+        $entityManager->remove($audio);
+        $entityManager->flush();
+        
+        // Supprimer les fichiers physiques
+        $projectDir = $this->getParameter('kernel.project_dir');
+        
+        if ($audioUrl && file_exists($projectDir . '/public/audios/podcasts/' . $audioUrl)) {
+            unlink($projectDir . '/public/audios/podcasts/' . $audioUrl);
+        }
+        
+        if ($cover && file_exists($projectDir . '/public/images/acover/' . $cover)) {
+            unlink($projectDir . '/public/images/acover/' . $cover);
+        }
+        
+            
+            $this->addFlash('success', 'Podcast supprimé avec succès');
         }
 
         return $this->redirectToRoute('app_audio_index', [], Response::HTTP_SEE_OTHER);

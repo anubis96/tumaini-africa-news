@@ -1,7 +1,10 @@
 framework:
-    default_locale: en
+    default_locale: 'fr'
+    enabled_locales: ['fr', 'en', 'sw']
     translator:
         default_path: '%kernel.project_dir%/translations'
         fallbacks:
-            - en
+            fr: 'fr'
+            en: 'en'
+            sw: 'sw'
         providers:

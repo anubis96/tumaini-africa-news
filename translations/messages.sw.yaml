@@ -1,0 +1,94 @@
+# Navigation
+nav:
+  home: Nyumbani
+  categories: Makundi
+  podcasts: Podikasti
+  video: Video
+  contact: Wasiliana
+  about: Kuhusu sisi
+  association: Chama
+  login: Ingia
+
+# Homepage
+home:
+  title: TUMAINI AFRICA NEWS
+  subtitle: Habari katika moyo wa Afrika
+  live: MOJA KWA MOJA
+  read_more: Soma zaidi
+  latest_news: Habari za hivi karibuni
+  featured: Habari muhimu
+  trending: Maarufu
+  most_viewed: Makala yaliyotazamwa zaidi
+  explore_categories: Chunguza makundi
+  newsletter: Jarida
+  newsletter_text: Pokea habari zetu kila wiki
+  subscribe: Jisajili
+  advertisement: Tangazo
+  advertise_space: Nafasi ya matangazo
+  sponsored: Inafadhiliwa
+  by: Na
+  views: maoni
+  min_read: dakika za kusoma
+  article: makala
+  articles: makala
+  your_email: Barua pepe yako
+  weekly: Imetazamwa zaidi wiki hii
+  contact_us: Wasiliana nasi
+
+# Article
+article:
+  published: Imechapishwa
+  updated: Ilisasishwa
+  share: Shiriki
+  facebook: Facebook
+  twitter: Twitter
+  whatsapp: WhatsApp
+  linkedin: LinkedIn
+  copy_link: Nakili kiungo
+  reading_time: dakika za kusoma
+  author: Mwandishi
+  comments: Maoni
+  leave_comment: Acha maoni
+  firstname: Jina la kwanza
+  lastname: Jina la mwisho
+  phone: Simu
+  email: Barua pepe
+  your_comment: Maoni yako
+  publish: Chapisha
+  related_articles: Makala yanayohusiana
+  see_more: Tazama zaidi
+  back_to_list: Rudi kwenye orodha
+  delete: Futa
+  edit: Badilisha
+
+# Comments
+comment:
+  pending: Inasubiri uidhinishaji
+  approved: Imeidhinishwa
+  rejected: Imekataliwa
+  approve: Idhinisha
+  reject: Kataa
+  success: Maoni yako yametumwa na yatachapishwa baada ya ukaguzi.
+  error: Hitilafu katika kutuma maoni
+  placeholder: Shiriki mawazo yako...
+  info: Taarifa zako hazitashirikiwa
+
+# Categories
+category:
+  title: Kategoria
+  all_articles: Makala zote
+  no_articles: Hakuna makala katika kategoria hii
+
+# Footer
+footer:
+  not_miss: Usikose habari yoyote
+  newsletter: Pokea jarida letu la kila wiki moja kwa moja kwenye kikasha chako
+  about_us: Kuhusu sisi
+  quick_links: Viungo muhimu
+  contact_us: Wasiliana nasi
+  privacy: Sera ya faragha
+  terms: Masharti ya matumizi
+  advertise: Nafasi za matangazo
+  careers: Kazi
+  all_rights_reserved: Haki zote zimehifadhiwa
+  description: Tumaini Africa News ndio chanzo chako cha kuaminika cha habari za Kiafrika. Siasa, uchumi, utamaduni, michezo, na ubunifu wa kiteknolojia....

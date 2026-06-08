@@ -17,10 +17,8 @@
                     contact@tumainiafricanews.info
                 </span>
             </div>
-            <div class="flex items-center gap-3">
-                <a href="#" class="hover:underline text-white/90 hover:text-white transition-colors">Devenir annonceur</a>
-                <span class="w-px h-4 bg-white/30"></span>
-                <a href="#" class="hover:underline text-white/90 hover:text-white transition-colors">Soumettre un article</a>
+            <div>
+                {% include 'partials/_language_switcher.html.twig' %}
             </div>
         </div>
     </div>
@@ -34,9 +32,9 @@
                     <img src="/images/static/tan-logos.png" class="h-10 w-auto transition-transform duration-300 group-hover:scale-105" alt="Tumaini Africa News">
                     <div class="hidden sm:block">
                         <span class="text-xl font-bold gradient-text">
-                            TUMAINI AFRICA NEWS
+                            {{ 'home.title'|trans }}
                         </span>
-                        <p class="text-xs text-gray-500 -mt-1">L'information au cœur de l'Afrique</p>
+                        <p class="text-xs text-gray-500 -mt-1">{{ 'home.subtitle'|trans }}</p>
                     </div>
                 </a>
 
@@ -62,13 +60,13 @@
                 <div class="hidden lg:flex lg:items-center lg:space-x-1" id="mobile-menu">
                     <ul class="flex flex-col lg:flex-row lg:space-x-1">
                         <li>
-                            <a href="/" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">Accueil</a>
+                            <a href="/" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">{{ 'nav.home'|trans }}</a>
                         </li>
                         
                         <!-- Mega menu Catégories -->
                         <li class="relative group">
                             <button class="flex items-center gap-1 px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all group">
-                                Catégories
+                                {{ 'nav.categories'|trans }}
                                 <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                                 </svg>
@@ -94,13 +92,13 @@
                             </div>
                         </li>
                         
-                        <li><a href="/podcasts" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">Podcasts</a></li>
-                        <li><a href="/videos" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">Vidéos</a></li>
-                        <li><a href="/contact" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">Contact</a></li>
-                        <li><a href="/about" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">À propos</a></li>
+                        <li><a href="/podcasts" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">{{ 'nav.podcasts'|trans }}</a></li>
+                            <li><a href="/videos" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">{{ 'nav.video'|trans }}</a></li>
+                        <li><a href="/contact" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">{{ 'nav.contact'|trans }}</a></li>
+                        <li><a href="/about" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">{{ 'nav.about'|trans }}</a></li>
                         <li>
                             <a href="https://asblmwanadamu.tumainiafricanews.info/" target="_blank" class="block px-4 py-2 rounded-lg text-gray-700 font-medium hover:bg-amber-50 hover:text-amber-600 transition-all">
-                                Association
+                                {{ 'nav.association'|trans }}
                                 <svg class="inline w-3 h-3 ml-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                                 </svg>

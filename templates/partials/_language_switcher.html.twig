@@ -1,0 +1,17 @@
+{# templates/partials/_language_switcher.html.twig #}
+<div class="flex items-center gap-3">
+    <a href="{{ path('change_language', {'locale': 'fr'}) }}" 
+       class="pb-1 text-sm font-medium transition-all duration-300 {% if app.request.locale == 'fr' %}text-white border-b-2 border-white{% else %}text-gray-600 hover:text-white{% endif %}">
+        Français
+    </a>
+    
+    <a href="{{ path('change_language', {'locale': 'en'}) }}" 
+       class="pb-1 text-sm font-medium transition-all duration-300 {% if app.request.locale == 'en' %}text-white border-b-2 border-white{% else %}text-gray-600 hover:text-white{% endif %}">
+        English
+    </a>
+    
+    <a href="{{ path('change_language', {'locale': 'sw'}) }}" 
+       class="pb-1 text-sm font-medium transition-all duration-300 {% if app.request.locale == 'sw' %}text-white border-b-2 border-white{% else %}text-gray-600 hover:text-white{% endif %}">
+        Kiswahili
+    </a>
+</div>

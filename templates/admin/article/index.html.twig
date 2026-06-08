@@ -38,80 +38,94 @@
                   </button>
               </div>
           </div>
-          <div class="overflow-x-auto">
-              <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                  <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                      <tr>
-                          <th scope="col" class="p-4">
-                              <div class="flex items-center">
-                                  <input id="checkbox-all" type="checkbox" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-yellow-600 focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                  <label for="checkbox-all" class="sr-only">checkbox</label>
-                              </div>
-                          </th>
-                          <th scope="col" class="px-4 py-3">Titre</th>
-                          <th scope="col" class="px-4 py-3">Catégorie</th>
-                          <th scope="col" class="px-4 py-3">Status</th>
-                          <th scope="col" class="px-4 py-3">Publié le</th>
-                          <th scope="col" class="px-4 py-3">Créer le</th>
-                          <th scope="col" class="px-4 py-3">Dernier maj</th>
-                          <th scope="col" class="px-4 py-3">Commentaires</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                  {% for article in articles %}
-                      <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
-                          <td class="w-4 px-4 py-3">
-                            <a href="{{ path('app_article_edit', {'id': article.id}) }}">
-                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
-                                </svg>
-                            </a>
-                          </td>
-                          <th scope="row" class="flex items-center px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                            <a href="{{ path('app_article_show', {'id': article.id}) }}" class="flex items-center">
-                              <img src="https://flowbite.s3.amazonaws.com/blocks/application-ui/products/imac-front-image.png" alt="iMac Front Image" class="w-auto h-8 mr-3">
-                              {{ article.title | slice(0, 100) }} ...
-                            </a>
-                          </th>
-                          <td class="px-4 py-2">
-                              <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">{{ article.category.name }}</span>
-                          </td>
-                          <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                          {% if article.publishedAt is defined %}
-                              <span class="bg-gray-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Publié</span>
+          
+          <!-- Container avec overflow-x-auto pour le scroll horizontal si nécessaire -->
+          <div class="overflow-x-auto shadow-sm">
+              <div class="inline-block min-w-full align-middle">
+                  <div class="overflow-hidden">
+                      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                              <tr>
+                                  <th scope="col" class="p-4 w-12">
+                                      <div class="flex items-center">
+                                          <input id="checkbox-all" type="checkbox" class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-yellow-600 focus:ring-yellow-500 dark:focus:ring-yellow-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                          <label for="checkbox-all" class="sr-only">checkbox</label>
+                                      </div>
+                                  </th>
+                                  <th scope="col" class="px-4 py-3 whitespace-nowrap">Titre</th>
+                                  <th scope="col" class="px-4 py-3 whitespace-nowrap">Catégorie</th>
+                                  <th scope="col" class="px-4 py-3 whitespace-nowrap">Status</th>
+                                  <th scope="col" class="px-4 py-3 whitespace-nowrap">Publié le</th>
+                                  <th scope="col" class="px-4 py-3 whitespace-nowrap">Créer le</th>
+                                  <th scope="col" class="px-4 py-3 whitespace-nowrap">Dernier maj</th>
+                                  <th scope="col" class="px-4 py-3 whitespace-nowrap">Commentaires</th>
+                              </tr>
+                          </thead>
+                          <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                          {% for article in articles %}
+                              <tr class="border-b dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                  <td class="w-4 px-4 py-3">
+                                    <a href="{{ path('app_article_edit', {'id': article.id}) }}">
+                                        <svg class="w-6 h-6 text-gray-800 dark:text-white hover:text-yellow-600 transition-colors" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                                        </svg>
+                                    </a>
+                                  </td>
+                                  <th scope="row" class="px-4 py-2 font-medium text-gray-900 dark:text-white">
+                                    <a href="{{ path('app_article_show', {'id': article.id}) }}" class="flex items-center hover:text-yellow-600 transition-colors">
+                                      <img src="https://flowbite.s3.amazonaws.com/blocks/application-ui/products/imac-front-image.png" alt="iMac Front Image" class="w-auto h-8 mr-3 flex-shrink-0">
+                                      <span class="break-words max-w-md">{{ article.title | slice(0, 80) }}{% if article.title|length > 80 %}...{% endif %}</span>
+                                    </a>
+                                  </th>
+                                  <td class="px-4 py-2 whitespace-nowrap">
+                                      <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2 py-0.5 rounded dark:bg-yellow-900 dark:text-yellow-300">{{ article.category.name }}</span>
+                                  </td>
+                                  <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                  {% if article.publishedAt is defined and article.publishedAt %}
+                                      <span class="bg-green-100 text-green-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-green-900 dark:text-green-300">Publié</span>
+                                  {% else %}
+                                      <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-400">Brouillon</span>
+                                  {% endif %}
+                                  </td>
+                                  <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ article.publishedAt ? article.publishedAt|date('Y-m-d') : '-' }}</td>
+                                  <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ article.createdAt ? article.createdAt|date('Y-m-d') : '-' }}</td>
+                                  <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ article.updatedAt ? article.updatedAt|date('Y-m-d') : '-' }}</td>
+                                  <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                      <div class="flex items-center gap-2">
+                                          5
+                                          <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                              <path fill-rule="evenodd" d="M3.559 4.544c.355-.35.834-.544 1.33-.544H19.11c.496 0 .975.194 1.33.544.356.35.559.829.559 1.331v9.25c0 .502-.203.981-.559 1.331-.355.35-.834.544-1.33.544H15.5l-2.7 3.6a1 1 0 0 1-1.6 0L8.5 17H4.889c-.496 0-.975-.194-1.33-.544A1.868 1.868 0 0 1 3 15.125v-9.25c0-.502.203-.981.559-1.331ZM7.556 7.5a1 1 0 1 0 0 2h8a1 1 0 0 0 0-2h-8Zm0 3.5a1 1 0 1 0 0 2H12a1 1 0 1 0 0-2H7.556Z" clip-rule="evenodd"/>
+                                          </svg>
+                                      </div>
+                                  </td>
+                              </tr>
                           {% else %}
-                              <span class="bg-gray-100 text-gray-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-sm dark:bg-gray-700 dark:text-gray-400 border border-gray-500">Brouillon</span>
-                          {% endif %}
-                          </td>
-                          <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ article.publishedAt ? article.publishedAt|date('Y-m-d') : '' }}</td>
-                          <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ article.createdAt ? article.createdAt|date('Y-m-d') : '' }}</td>
-                          <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{ article.updatedAt ? article.updatedAt|date('Y-m-d') : '' }}</td>
-                          <td class="px-4 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                              <div class="flex items-center gap-2">
-                                  5
-                                <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                                    <path fill-rule="evenodd" d="M3.559 4.544c.355-.35.834-.544 1.33-.544H19.11c.496 0 .975.194 1.33.544.356.35.559.829.559 1.331v9.25c0 .502-.203.981-.559 1.331-.355.35-.834.544-1.33.544H15.5l-2.7 3.6a1 1 0 0 1-1.6 0L8.5 17H4.889c-.496 0-.975-.194-1.33-.544A1.868 1.868 0 0 1 3 15.125v-9.25c0-.502.203-.981.559-1.331ZM7.556 7.5a1 1 0 1 0 0 2h8a1 1 0 0 0 0-2h-8Zm0 3.5a1 1 0 1 0 0 2H12a1 1 0 1 0 0-2H7.556Z" clip-rule="evenodd"/>
-                                </svg>
-                              </div>
-                          </td>
-                      </tr>
-                  {% else %}
-                       <tr>
-                        Aucune Article
-                       </tr>
-                  {% endfor %}
-                  <div class="navigation">
-                  {{ knp_pagination_render(articles) }}
-                </div>
-                  </tbody>
-              </table>
+                              <tr>
+                                  <td colspan="8" class="text-center py-8 text-gray-500 dark:text-gray-400">
+                                      Aucun article trouvé
+                                  </td>
+                              </tr>
+                          {% endfor %}
+                          </tbody>
+                      </table>
+                  </div>
+              </div>
           </div>
-          <nav class="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0" aria-label="Table navigation">
+          
+          <!-- Pagination -->
+          {% if articles|length > 0 %}
+          <div class="navigation p-4 border-t dark:border-gray-700">
+              {{ knp_pagination_render(articles) }}
+          </div>
+          {% endif %}
+          
+          <nav class="flex flex-col items-start justify-between p-4 space-y-3 md:flex-row md:items-center md:space-y-0 border-t dark:border-gray-700" aria-label="Table navigation">
               <span class="text-sm font-normal text-gray-500 dark:text-gray-400">
-                  Vus
-                  <span class="font-semibold text-gray-900 dark:text-white">1-10</span>
+                  Affichage de
+                  <span class="font-semibold text-gray-900 dark:text-white">1-{{ articles|length }}</span>
                   sur
-                  <span class="font-semibold text-gray-900 dark:text-white">1000</span>
+                  <span class="font-semibold text-gray-900 dark:text-white">{{ articles.getTotalItemCount ?? articles|length }}</span>
+                  articles
               </span>
               <ul class="inline-flex items-stretch -space-x-px">
                   <li>

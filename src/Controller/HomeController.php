@@ -18,12 +18,15 @@ use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class HomeController extends AbstractController
 {
-    #[Route('/', name: 'app_home')]
+    #[Route('/{_locale}', name: 'app_home', requirements: ['_locale' => 'fr|en|sw'])]
     public function index(ArticleRepository $articleRepo, 
         CategoryRepository $categoryRepository,
         AdvertiseRepository $advertiseRepository,
         Request $request): Response
     {
+        $locale = $request->getLocale();
+        $GLOBALS['locale'] = $locale;
+
         $last_urgent_articles = $articleRepo->findThreeLatestUrgent();
         $categoriesResult = $categoryRepository->findTopCategoriesWithMostArticles(7);
         $categories = array_map(function($item){
@@ -63,7 +66,8 @@ final class HomeController extends AbstractController
             'trending' => $trending,
             'last_advertise' => $last_advertise,
             'advertises_count'=> count($last_advertise),
-            'middle_advertise' => $last_advertise_middle
+            'middle_advertise' => $last_advertise_middle,
+            'current_locale' => $locale,
         ]);
     }
 

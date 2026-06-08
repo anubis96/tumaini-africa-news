@@ -32,6 +32,7 @@ final class AdminController extends AbstractController
             'totalArticles' => count($articleRepository->findAll()),
             'totalUsers' => count($users),
             'totalAudios' => count($audioRepository->findAll()),
+            'totalCategories' => count($categoryRepository->findAll())
         ];
 
         return $this->render('admin/dashboard.html.twig', [

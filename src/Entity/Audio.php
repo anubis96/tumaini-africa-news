@@ -25,12 +25,12 @@ class Audio
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $description = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $audioUrl = null;
 
     #[Vich\UploadableField(mapping: 'audio', fileNameProperty: 'audioUrl')]
     #[Assert\File(
-        maxSize:'10M',
+        maxSize:'30M',
         extensions:['mp3','MP3', 'wav'],
         extensionsMessage:'Seul les fichiers audios sont autorisés'
     )]
@@ -109,7 +109,7 @@ class Audio
         return $this->audioUrl;
     }
 
-    public function setAudioUrl(string $audioUrl): static
+    public function setAudioUrl(string $audioUrl): ?static
     {
         $this->audioUrl = $audioUrl;
 

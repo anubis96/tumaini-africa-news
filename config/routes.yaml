@@ -3,3 +3,38 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+# Route par défaut avec locale
+index:
+    path: /{_locale}/
+    controller: App\Controller\HomeController::index
+    requirements:
+        _locale: 'fr|en|sw'
+
+home:
+    path: /{_locale}/home
+    controller: App\Controller\HomeController::index
+    requirements:
+        _locale: 'fr|en|sw'
+
+article_show:
+    path: /{_locale}/article/{slug}
+    controller: App\Controller\SingleArticlePublicController::index
+    requirements:
+        _locale: 'fr|en|sw'
+        slug: '[a-z0-9\-]+'
+
+category_show:
+    path: /{_locale}/category/{slug}
+    controller: App\Controller\CateryPublicController::index
+    requirements:
+        _locale: 'fr|en|sw'
+        slug: '[a-z0-9\-]+'
+
+# Redirection vers la locale par défaut
+root:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: 'home'
+        _locale: 'fr'

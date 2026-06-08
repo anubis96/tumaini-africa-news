@@ -5,14 +5,14 @@
         <div class="container mx-auto px-4 py-12">
             <div class="flex flex-col md:flex-row justify-between items-center gap-6">
                 <div class="text-center md:text-left">
-                    <h3 class="text-2xl font-bold text-white mb-2">Ne manquez aucune actualité</h3>
-                    <p class="text-gray-400">Recevez notre newsletter hebdomadaire directement dans votre boîte mail</p>
+                    <h3 class="text-2xl font-bold text-white mb-2">{{ 'footer.not_miss'|trans }}</h3>
+                    <p class="text-gray-400">{{ 'footer.newsletter'|trans }}</p>
                 </div>
                 <form class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                    <input type="email" placeholder="Votre adresse email" 
+                    <input type="email" placeholder="{{ 'home.your_email'|trans }}" 
                            class="px-5 py-3 rounded-xl bg-gray-800 border border-gray-700 text-white placeholder:text-gray-500 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 outline-none transition-all w-full sm:w-80">
                     <button class="px-6 py-3 text-white font-semibold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-300" style="background: linear-gradient(to right, #d97706, #f97316);">
-                        S'abonner
+                        {{ 'home.subscribe'|trans }}
                     </button>
                 </form>
             </div>
@@ -27,13 +27,12 @@
                 <div class="flex items-center gap-3 mb-4">
                     <img src="/images/static/tan-logos.png" class="h-10 w-auto" alt="Tumaini Africa News">
                     <div>
-                        <h3 class="text-white font-bold text-lg">TUMAINI AFRICA NEWS</h3>
-                        <p class="text-xs text-amber-500">L'information au cœur de l'Afrique</p>
+                        <h3 class="text-white font-bold text-lg">{{ 'home.title'|trans }}</h3>
+                        <p class="text-xs text-amber-500">{{ 'home.subtitle'|trans }}</p>
                     </div>
                 </div>
                 <p class="text-gray-400 text-sm leading-relaxed mb-4">
-                    Tumaini Africa News est votre source d'information de confiance pour l'actualité africaine. 
-                    Politique, économie, culture, sport et innovations technologiques.
+                    {{ 'footer.description'|trans }}
                 </p>
                 <div class="flex gap-3">
                     <a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-amber-600 transition-all group">
@@ -74,20 +73,20 @@
             
             <!-- Quick links -->
             <div>
-                <h4 class="text-white font-bold text-lg mb-4">Liens utiles</h4>
+                <h4 class="text-white font-bold text-lg mb-4">{{ 'footer.quick_links'|trans }}</h4>
                 <ul class="space-y-2">
-                    <li><a href="/about" class="text-gray-400 hover:text-amber-400 transition-colors">À propos de nous</a></li>
-                    <li><a href="/contact" class="text-gray-400 hover:text-amber-400 transition-colors">Nous contacter</a></li>
-                    <li><a href="/privacy" class="text-gray-400 hover:text-amber-400 transition-colors">Politique de confidentialité</a></li>
-                    <li><a href="/terms" class="text-gray-400 hover:text-amber-400 transition-colors">Conditions d'utilisation</a></li>
-                    <li><a href="/advertise" class="text-gray-400 hover:text-amber-400 transition-colors">Espace annonceurs</a></li>
-                    <li><a href="/careers" class="text-gray-400 hover:text-amber-400 transition-colors">Carrières</a></li>
+                    <li><a href="/about" class="text-gray-400 hover:text-amber-400 transition-colors">{{ 'footer.contact_us'|trans }}</a></li>
+                    <li><a href="/contact" class="text-gray-400 hover:text-amber-400 transition-colors">{{ 'footer.about_us'|trans }}</a></li>
+                    <li><a href="/privacy" class="text-gray-400 hover:text-amber-400 transition-colors">{{ 'footer.privacy'|trans }}</a></li>
+                    <li><a href="/terms" class="text-gray-400 hover:text-amber-400 transition-colors">{{ 'footer.terms'|trans }}</a></li>
+                    <li><a href="/advertise" class="text-gray-400 hover:text-amber-400 transition-colors">{{ 'footer.advertise'|trans }}</a></li>
+                    <li><a href="/careers" class="text-gray-400 hover:text-amber-400 transition-colors">{{ 'footer.careers'|trans }}</a></li>
                 </ul>
             </div>
             
             <!-- Contact -->
             <div>
-                <h4 class="text-white font-bold text-lg mb-4">Nous contacter</h4>
+                <h4 class="text-white font-bold text-lg mb-4">{{ 'contact_us'|trans }}</h4>
                 <ul class="space-y-3">
                     <li class="flex items-start gap-3">
                         <svg class="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -118,7 +117,7 @@
         <div class="container mx-auto px-4">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
                 <p class="text-gray-500 text-sm">
-                    &copy; {{ "now"|date('Y') }} Tumaini Africa News. Tous droits réservés.
+                    &copy; {{ "now"|date('Y') }} Tumaini Africa News. {{ 'footer.all_rights_reserved'|trans }}.
                 </p>
                 <div class="flex gap-6">
                     <a href="#" class="text-gray-500 text-sm hover:text-amber-400 transition-colors">Mentions légales</a>

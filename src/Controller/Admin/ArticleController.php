@@ -43,12 +43,17 @@ final class ArticleController extends AbstractController
             }
 
             $article->setCreatedAt(new DateTimeImmutable());
-            $article->setPublishedAt(new DateTimeImmutable());
+
+            if ($article->getIsPublished()) {
+                $article->setPublishedAt(new DateTimeImmutable());
+            }
+
             $article->setSlug($this->generateSlug($article->getTitle()));
             $article->setAuthor($this->getUser());
             $entityManager->persist($article);
             $entityManager->flush();
 
+            $this->addFlash('success', 'Article créé avec succès !');
             return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -75,13 +80,17 @@ final class ArticleController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $article->setUpdatedAt(new DateTimeImmutable());
             
-            if ($article->getIsPublished() && !$article->getPublishedAt()) {
-                $article->setPublishedAt(new DateTimeImmutable());
-            }
+        // Gestion de la publication
+        if ($article->getIsPublished() && !$article->getPublishedAt()) {
+            $article->setPublishedAt(new DateTimeImmutable());
+        } elseif (!$article->getIsPublished()) {
+            $article->setPublishedAt(null);
+        }
             $article->setSlug($this->generateSlug($article->getTitle()));
             $article->setAuthor($this->getUser());
             $entityManager->flush();
 
+            $this->addFlash('success', 'Article modifié avec succès !');
             return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
         }
 

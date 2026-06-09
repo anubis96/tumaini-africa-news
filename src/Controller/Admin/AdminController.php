@@ -22,27 +22,28 @@ final class AdminController extends AbstractController
         CommentRepository $commentRepository
     ): Response
     {
+        // Récupération des données
         $categories = $categoryRepository->findAll();
         $articles = $articleRepository->findBy([], ['publishedAt' => 'DESC'], 10);
         $audios = $audioRepository->findBy([], ['publishedAt' => 'DESC'], 5);
         $users = $userRepository->findAll();
-        $comments = $commentRepository->countPendingComments();
+        $pendingCount = $commentRepository->countPendingComments();
 
+        // Statistiques
         $stats = [
-            'totalArticles' => count($articleRepository->findAll()),
-            'totalUsers' => count($users),
-            'totalAudios' => count($audioRepository->findAll()),
-            'totalCategories' => count($categoryRepository->findAll())
+            'totalArticles' => $articleRepository->count([]),
+            'totalUsers' => $userRepository->count([]),
+            'totalAudios' => $audioRepository->count([]),
+            'totalCategories' => $categoryRepository->count([])
         ];
-
+        
         return $this->render('admin/dashboard.html.twig', [
-            'controller_name' => 'AdminController',
             'categories' => $categories,
             'articles' => $articles,
             'audios' => $audios,
             'users' => $users,
             'stats' => $stats,
-            'pending_count' => $comments
+            'pending_count' => $pendingCount
         ]);
     }
 }

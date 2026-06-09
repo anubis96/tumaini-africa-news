@@ -1,4 +1,5 @@
 <?php
+// src/Controller/LoginController.php
 
 namespace App\Controller;
 
@@ -12,10 +13,18 @@ class LoginController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // get the login error if there is one
-        $error = $authenticationUtils->getLastAuthenticationError();
+        // Si l'utilisateur est déjà connecté, rediriger
+        if ($this->getUser()) {
+            if (in_array('ROLE_ADMIN', $this->getUser()->getRoles())) {
+                return $this->redirectToRoute('app_admin');
+            }
+            return $this->redirectToRoute('app_admin');
+        }
 
-        // last username entered by the user
+        // Récupérer l'erreur
+        $error = $authenticationUtils->getLastAuthenticationError();
+        
+        // Récupérer le dernier email saisi
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('login/login.html.twig', [

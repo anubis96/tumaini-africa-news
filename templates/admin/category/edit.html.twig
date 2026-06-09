@@ -1,47 +1,171 @@
 {% extends 'admin/dashboard.html.twig' %}
 
-{% block title %}Categorie {{ category.name}} {% endblock %}
+{% block title %}Modifier - {{ category.name }}{% endblock %}
 
 {% block in_body %}
+<div class="w-full max-w-full bg-gray-50 dark:bg-gray-900 p-4 overflow-x-hidden">
+    <div class="max-w-2xl mx-auto">
+        {# En-tête #}
+        <div class="mb-6">
+            <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2">
+                <a href="{{ path('app_category_index') }}" class="hover:text-amber-600">Catégories</a>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+                <span>Modifier</span>
+            </div>
+            <h1 class="text-2xl font-bold bg-gradient-to-r from-amber-600 to-orange-600 bg-clip-text text-transparent flex items-center gap-2">
+                <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Modifier : {{ category.name }}
+            </h1>
+        </div>
 
-<section class="w-full dark:bg-gray-900 py-1 sm:py-2">
-  <div class="mx-auto max-w-screen-2xl lg:px-6">
-      <div class="relative overflow-hidden bg-white shadow-md dark:bg-gray-800 sm:rounded-lg">
-        <h5 class="text-center mb-2 text-2xl font-semibold dark:text-white">
-            <span class="bg-gradient-to-r from-orange-500 to-red-800 text-transparent bg-clip-text">Modifier la catégorie {{ category.name }}</span></h5>
-        </h5>
-        <section class="bg-white dark:bg-gray-900">
-        <div class="py-8 px-4 mx-auto max-w-2xl lg:py-16">
-        {{ form_start(form) }}
-            <div>
-                {{ form_label(form.name, 'Nom de la categorie', {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 dark:text-white'}}) }}
-                {{ form_widget(form.name, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-600 focus:border-yellow-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-yellow-500 dark:focus:border-yellow-500'}}) }}
-                {{ form_errors(form.name, {'attr': {'class': 'text-red-500 text-sm'}}) }}
+        {# Formulaire #}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="p-6">
+                {{ form_start(form, {'attr': {'class': 'space-y-5'}}) }}
+                    
+                    {# Nom #}
+                    <div>
+                        {{ form_label(form.name, 'Nom de la catégorie', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                        {{ form_widget(form.name, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'}}) }}
+                        {{ form_errors(form.name) }}
+                    </div>
+
+                    {# Description #}
+                    <div>
+                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                        {{ form_widget(form.description, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white', 'rows': 4}}) }}
+                        {{ form_errors(form.description) }}
+                    </div>
+
+                    {# Informations supplémentaires #}
+                    <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 space-y-2">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">Slug actuel :</span>
+                            <span class="font-mono text-amber-600 dark:text-amber-400">{{ category.slug }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">Date de création :</span>
+                            <span class="text-gray-700 dark:text-gray-300">{{ category.createdAt ? category.createdAt|date('d/m/Y H:i') : '-' }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">Dernière modification :</span>
+                            <span class="text-gray-700 dark:text-gray-300">{{ category.updatedAt ? category.updatedAt|date('d/m/Y H:i') : '-' }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">Nombre d'articles :</span>
+                            <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">{{ category.articles|length }}</span>
+                        </div>
+                    </div>
+
+                    {# Actions #}
+                    <div class="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
+                        <a href="{{ path('app_category_index') }}" 
+                           class="px-5 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                            </svg>
+                            Retour
+                        </a>
+                        <button type="submit" 
+                                class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                            Mettre à jour
+                        </button>
+                    </div>
+
+                {{ form_end(form) }}
             </div>
-            <div>
-                {{ form_label(form.description, 'Description', {'label_attr': {'class': 'block mb-2 text-sm font-medium text-gray-900 dark:text-white'}}) }}
-                {{ form_widget(form.description, {'attr': {'class': 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-yellow-600 focus:border-yellow-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-yellow-500 dark:focus:border-yellow-500'}}) }}
-                {{ form_errors(form.description, {'attr': {'class': 'text-red-500 text-sm'}}) }}
-            </div>
-            <div class="flex gap-5 items-center">
-                <a href="{{ path('app_category_index') }}">
-                    <svg class="w-6 h-6 text-orange-700 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M14.502 7.046h-2.5v-.928a2.122 2.122 0 0 0-1.199-1.954 1.827 1.827 0 0 0-1.984.311L3.71 8.965a2.2 2.2 0 0 0 0 3.24L8.82 16.7a1.829 1.829 0 0 0 1.985.31 2.121 2.121 0 0 0 1.199-1.959v-.928h1a2.025 2.025 0 0 1 1.999 2.047V19a1 1 0 0 0 1.275.961 6.59 6.59 0 0 0 4.662-7.22 6.593 6.593 0 0 0-6.437-5.695Z"/>
+        </div>
+
+        {# Zone de suppression #}
+        <div class="mt-6 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800 p-6">
+            <div class="flex items-center justify-between flex-wrap gap-4">
+                <div>
+                    <h3 class="text-lg font-semibold text-red-800 dark:text-red-400 flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        Zone dangereuse
+                    </h3>
+                    <p class="text-sm text-red-600 dark:text-red-300 mt-1">
+                        La suppression d'une catégorie est irréversible. Les articles associés ne seront pas supprimés.
+                    </p>
+                </div>
+                <button type="button" 
+                        onclick="confirmDelete({{ category.id }}, '{{ category.name|e('js') }}')"
+                        class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
-                </a>
-                <button type="submit" class="cursor-pointer inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-yellow-700 rounded-lg focus:ring-4 focus:ring-yellow-200 dark:focus:ring-yellow-900 hover:bg-yellow-800">
-                    Mettre a jour
+                    Supprimer cette catégorie
                 </button>
             </div>
-            {{ form_end(form) }}
-            {{ include('admin/category/_delete_form.html.twig') }}
         </div>
-      </section>
-      </div>
     </div>
-</section>
+</div>
 
-    {# <a href="{{ path('app_category_index') }}">back to list</a> #}
+{# Formulaire de suppression caché #}
+<form id="deleteForm" method="post" action="" style="display: none;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}" id="deleteToken">
+</form>
 
+{# Modal de confirmation #}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Confirmer la suppression</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6" id="deleteMessage"></p>
+            <div class="flex gap-3 justify-center">
+                <button type="button" onclick="closeDeleteModal()" 
+                        class="px-5 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">
+                    Annuler
+                </button>
+                <button type="button" onclick="submitDelete()" 
+                        class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                    Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deleteId = null;
     
+    function confirmDelete(id, name) {
+        deleteId = id;
+        document.getElementById('deleteMessage').innerHTML = `Êtes-vous sûr de vouloir supprimer la catégorie <strong>"${name}"</strong> ? Cette action est irréversible. Les articles associés ne seront pas supprimés.`;
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+        deleteId = null;
+    }
+
+    function submitDelete() {
+        if (deleteId) {
+            const form = document.getElementById('deleteForm');
+            form.action = "{{ path('app_category_delete', {'id': 0}) }}".replace('0', deleteId);
+            form.submit();
+        }
+    }
+
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>
 {% endblock %}

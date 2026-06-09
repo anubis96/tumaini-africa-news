@@ -24,19 +24,31 @@ class RegistrationController extends AbstractController
             /** @var string $plainPassword */
             $plainPassword = $form->get('plainPassword')->getData();
 
-            // encode the plain password
+            // Encoder le mot de passe
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+            
+            // Désactiver le compte par défaut (à activer par l'admin)
+            $user->setIsActive(false);
+            
+            // Définir un username par défaut si vide
+            if (empty($user->getUsername())) {
+                $user->setUsername(explode('@', $user->getEmail())[0]);
+            }
+            
+            // Définir les rôles par défaut
+            $user->setRoles(['ROLE_USER']);
 
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // do anything else you need here, like send an email
+            // Ajouter un message flash de succès
+            $this->addFlash('success', 'Votre compte a été créé avec succès ! Un administrateur doit l\'activer avant votre première connexion.');
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('app_login');
         }
 
         return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
+            'registrationForm' => $form->createView(),
         ]);
     }
 }

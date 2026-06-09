@@ -1,42 +1,207 @@
 {% extends 'admin/dashboard.html.twig' %}
 
-{% block title %}Category{% endblock %}
+{% block title %}Catégorie : {{ category.name }}{% endblock %}
 
 {% block in_body %}
-    <h1>Category</h1>
+<div class="w-full max-w-full bg-gray-50 dark:bg-gray-900 p-4 overflow-x-hidden">
+    <div class="max-w-4xl mx-auto">
+        {# Fil d'Ariane #}
+        <div class="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <a href="{{ path('app_category_index') }}" class="hover:text-amber-600">Catégories</a>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+            <span>{{ category.name }}</span>
+        </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ category.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ category.name }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ category.description }}</td>
-            </tr>
-            <tr>
-                <th>Slug</th>
-                <td>{{ category.slug }}</td>
-            </tr>
-            <tr>
-                <th>CreatedAt</th>
-                <td>{{ category.createdAt ? category.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>UpdatedAt</th>
-                <td>{{ category.updatedAt ? category.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-        </tbody>
-    </table>
+        {# En-tête #}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden mb-6">
+            <div class="h-32 bg-gradient-to-r from-amber-400 to-orange-500"></div>
+            <div class="px-6 pb-6">
+                <div class="flex items-center justify-between -mt-12 mb-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-20 h-20 rounded-full bg-white dark:bg-gray-800 flex items-center justify-center shadow-lg">
+                            <svg class="w-10 h-10 text-amber-500" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2l-5.5 9h11z"/>
+                                <path d="M19 20H5v-2h14v2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-2xl font-bold text-gray-800 dark:text-white">{{ category.name }}</h1>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Slug : {{ category.slug }}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <a href="{{ path('app_category_edit', {'id': category.id}) }}" 
+                           class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                            Modifier
+                        </a>
+                        <button type="button" 
+                                onclick="confirmDelete({{ category.id }}, '{{ category.name|e('js') }}')"
+                                class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                            Supprimer
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <a href="{{ path('app_category_index') }}">back to list</a>
+        {# Informations #}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <div class="lg:col-span-2">
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                        Description
+                    </h2>
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        {{ category.description ?: 'Aucune description fournie.' }}
+                    </p>
+                </div>
+            </div>
 
-    <a href="{{ path('app_category_edit', {'id': category.id}) }}">edit</a>
+            <div>
+                <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+                    <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        Statistiques
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400">ID</span>
+                            <span class="font-mono text-gray-800 dark:text-white">{{ category.id }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400">Date de création</span>
+                            <span class="text-gray-800 dark:text-white">{{ category.createdAt ? category.createdAt|date('d/m/Y H:i') : '-' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600 dark:text-gray-400">Dernière modification</span>
+                            <span class="text-gray-800 dark:text-white">{{ category.updatedAt ? category.updatedAt|date('d/m/Y H:i') : '-' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
+                            <span class="text-gray-600 dark:text-gray-400">Articles associés</span>
+                            <span class="px-2 py-1 rounded-full bg-amber-100 text-amber-700 font-semibold">{{ category.articles|length }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    {{ include('admin/category/_delete_form.html.twig') }}
+        {# Liste des articles de la catégorie #}
+        {% if category.articles|length > 0 %}
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                <h2 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                    <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/>
+                    </svg>
+                    Articles dans cette catégorie
+                </h2>
+            </div>
+            <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                {% for article in category.articles|slice(0, 10) %}
+                <div class="px-6 py-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <a href="{{ path('app_article_show', {'id': article.id}) }}" 
+                               class="text-gray-800 dark:text-white font-medium hover:text-amber-600 transition">
+                                {{ article.title }}
+                            </a>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                Publié le {{ article.publishedAt ? article.publishedAt|date('d/m/Y') : (article.createdAt|date('d/m/Y')) }}
+                            </p>
+                        </div>
+                        <a href="{{ path('app_article_show', {'id': article.id}) }}" 
+                           class="text-amber-600 hover:text-amber-700">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% if category.articles|length > 10 %}
+            <div class="px-6 py-3 border-t border-gray-200 dark:border-gray-700 text-center">
+                <a href="{{ path('app_article_index', {'category': category.id}) }}" 
+                   class="text-sm text-amber-600 hover:underline">
+                    Voir tous les {{ category.articles|length }} articles →
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {# Retour #}
+        <div class="mt-6">
+            <a href="{{ path('app_category_index') }}" 
+               class="inline-flex items-center gap-2 text-gray-600 hover:text-amber-600 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                </svg>
+                Retour à la liste des catégories
+            </a>
+        </div>
+    </div>
+</div>
+
+{# Formulaire de suppression #}
+<form id="deleteForm" method="post" action="" style="display: none;">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ category.id) }}" id="deleteToken">
+</form>
+
+{# Modal #}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Confirmer la suppression</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6" id="deleteMessage"></p>
+            <div class="flex gap-3 justify-center">
+                <button type="button" onclick="closeDeleteModal()" class="px-5 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">Annuler</button>
+                <button type="button" onclick="submitDelete()" class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let deleteId = null;
+    function confirmDelete(id, name) {
+        deleteId = id;
+        document.getElementById('deleteMessage').innerHTML = `Êtes-vous sûr de vouloir supprimer la catégorie <strong>"${name}"</strong> ? Cette action est irréversible. Les articles associés ne seront pas supprimés.`;
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    }
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+        deleteId = null;
+    }
+    function submitDelete() {
+        if (deleteId) {
+            const form = document.getElementById('deleteForm');
+            form.action = "{{ path('app_category_delete', {'id': 0}) }}".replace('0', deleteId);
+            form.submit();
+        }
+    }
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>
 {% endblock %}

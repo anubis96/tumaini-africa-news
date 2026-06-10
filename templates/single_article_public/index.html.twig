@@ -85,15 +85,17 @@
                     </svg>
                     <span>{{ article.content|striptags|length / 1000|round(0) }} min de lecture</span>
                 </div>
-                {% if article.viewCount %}
-                    <span>•</span>
-                    <div class="flex items-center gap-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                        <span>{{ article.viewCount }} vues</span>
-                    </div>
+                {% if app.user %}
+                    {% if article.viewCount %}
+                        <span>•</span>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                            <span>{{ article.viewCount }} vues</span>
+                        </div>
+                    {% endif %}
                 {% endif %}
                 {% if article.updatedAt > article.publishedAt %}
                     <span>•</span>
@@ -235,19 +237,7 @@
                     <div class="prose prose-lg max-w-none prose-headings:text-gray-800 prose-headings:font-bold prose-p:text-gray-700 prose-p:leading-relaxed prose-a:text-amber-600 prose-a:no-underline hover:prose-a:text-amber-700 prose-strong:text-gray-900 prose-li:text-gray-700 prose-img:rounded-lg prose-img:shadow-md">
                         {{ article.content|raw }}
                     </div>
-                    
-                    <!-- Google AdSense -->
-                    {# <div class="mt-8">
-                        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3326906173354935" crossorigin="anonymous"></script>
-                        <ins class="adsbygoogle"
-                            style="display:block"
-                            data-ad-format="fluid"
-                            data-ad-layout-key="-h2+d+5c-9-3e"
-                            data-ad-client="ca-pub-3326906173354935"
-                            data-ad-slot="9224543811"></ins>
-                        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-                    </div>
-                     #}
+                
                     <!-- Author Bio -->
                     <div class="mt-4 pt-2 border-t border-gray-100">
                         <div class="flex items-center gap-4 p-5 bg-gray-50 rounded-xl">
@@ -325,13 +315,15 @@
                                         </h4>
                                         <div class="flex items-center justify-between text-xs text-gray-400 mt-3">
                                             <span>{{ relatedArticle.publishedAt|date('d/m/Y') }}</span>
-                                            <span class="flex items-center gap-1">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                                </svg>
-                                                {{ relatedArticle.viewCount }}
-                                            </span>
+                                            {% if app.user %}
+                                                <span class="flex items-center gap-1">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                                    </svg>
+                                                    {{ relatedArticle.viewCount }}
+                                                </span>
+                                            {% endif %}
                                         </div>
                                     </div>
                                 </article>

@@ -287,7 +287,9 @@
                                 <span class="inline-block rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold">{{ first_viewed.category.name }}</span>
                                 <h3 class="mt-1 text-lg font-bold"><a href="{{ path('app_single_article_public', {'slug': first_viewed.slug}) }}" class="hover:text-amber-300">{{ first_viewed.title }}</a></h3>
                                 <div class="mt-1 flex items-center gap-3 text-xs">
+                                {% if app.user %}
                                     <span>👁️ {{ first_viewed.viewCount }} {{ 'home.views'|trans }}</span>
+                                {% endif %}
                                     <span>📅 {{ first_viewed.publishedAt|date('d/m/Y') }}</span>
                                 </div>
                             </div>
@@ -308,23 +310,15 @@
                                 <div class="flex-1">
                                     <h4 class="text-sm font-semibold text-gray-800 group-hover:text-amber-600 transition-colors line-clamp-2">{{ item.title }}</h4>
                                     <div class="mt-1 flex items-center gap-2 text-xs text-gray-400">
+                                    {% if app.user %}
                                         <span>👁️ {{ item.viewCount }}</span>
+                                    {% endif %}
                                         <span>{{ item.publishedAt|date('d/m/Y') }}</span>
                                     </div>
                                 </div>
                             </a>
                             {% endfor %}
                         </div>
-                    </div>
-
-                    <!-- Newsletter -->
-                    <div class="rounded-2xl custom-gradient p-6 text-white shadow-lg">
-                        <h3 class="text-xl font-bold">{{ 'home.newsletter'|trans }}</h3>
-                        <p class="mt-1 text-sm opacity-90">{{ 'home.newsletter_text'|trans }}</p>
-                        <form class="mt-4 flex gap-2">
-                            <input type="email" placeholder="{{ 'home.your_email'|trans }}" class="flex-1 rounded-lg px-4 py-2 text-gray-800 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white">
-                            <button class="rounded-lg bg-white px-4 py-2 font-semibold text-amber-600 transition-all hover:bg-gray-100">{{ 'home.subscribe'|trans }}</button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -364,7 +358,9 @@
                         <div class="p-4">
                             <div class="flex items-center gap-2 text-xs text-gray-400 mb-2">
                                 <span class="text-amber-600 font-semibold">{{ article.category.name }}</span>
-                                <span>👁️ {{ article.viewCount }} {{ 'home.views'|trans }}</span>
+                                {% if app.user %}
+                                    <span>👁️ {{ article.viewCount }} {{ 'home.views'|trans }}</span>
+                                {% endif %}
                             </div>
                             <h3 class="font-bold text-gray-800 group-hover:text-amber-600 transition-colors line-clamp-2">
                                 <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}">{{ article.title }}</a>

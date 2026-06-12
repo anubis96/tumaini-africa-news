@@ -119,6 +119,6 @@ class AActivityApiController extends AbstractController
         
         // Construire l'URL complète
         // Modifiez le port si nécessaire (8000 ou 8001 selon votre serveur)
-        return 'http://127.0.0.1:8000/images/activities/' . ltrim($imagePath, '/');
+        return 'https://tumainiafricanews.info/images/activities/' . ltrim($imagePath, '/');
     }
 }

@@ -8,13 +8,16 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 
 #[Route('/api/association/activities', name: 'api_association_activities_')]
 class AActivityApiController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private SerializerInterface $serializer
+        private SerializerInterface $serializer,
+        private UrlGeneratorInterface $urlGenerator 
     ) {}
 
     #[Route(path:'', name:'list', methods: ['GET'])]
@@ -25,15 +28,30 @@ class AActivityApiController extends AbstractController
             ['date' => 'DESC']
         );
 
-        // $data = $this->serializer->serialize($activities, 'json', [
-        //     'group' => 'api',
-        //     'circular_reference_handler' => function ($object){
-        //         return $object->getId();
-        //     }
-        // ]);
-
-        $data = $this->serializer->serialize($activities, 'json', ['group' => 'api']);
-        return new JsonResponse($data, Response::HTTP_OK, [], true);
+        $data = [];
+        foreach ($activities as $activity) {
+            $item = [
+                'id' => $activity->getId(),
+                'title' => $activity->getTitle(),
+                'description' => $activity->getDescription(),
+                'resume' => $activity->getResume(),
+                'date' => $activity->getDate()?->format('Y-m-d'),
+                'lieu' => $activity->getLieu(),
+                'status' => $activity->getStatus(),
+                'imageIcon' => $activity->getImageIcon(),
+                'participants' => $activity->getParticipants(),
+                'beneficiaires' => $activity->getBeneficiaires(),
+                'udatedAt' => $activity->getUdatedAt()?->format('Y-m-d H:i:s'),
+                'categories' => $activity->getCategories() ? [
+                    'id' => $activity->getCategories()->getId(),
+                    'nom' => $activity->getCategories()->getName()
+                ] : null,
+                // ✅ URL complète de l'image
+                'imageUrl' => $this->getPublicUrl($activity->getImageUrl()),
+            ];
+            $data[] = $item;
+        }
+        return $this->json($data, Response::HTTP_OK);
     }
 
     #[Route('/{id}', name: 'show', methods: ['GET'])]
@@ -83,5 +101,24 @@ class AActivityApiController extends AbstractController
         
         $data = $this->serializer->serialize($activities, 'json', ['groups' => 'api']);
         return new JsonResponse($data, Response::HTTP_OK, [], true);
+    }
+
+        /**
+     * Construit l'URL publique complète d'une image
+     */
+    private function getPublicUrl(?string $imagePath): ?string
+    {
+        if (empty($imagePath)) {
+            return null;
+        }
+        
+        // Si l'URL est déjà complète, la retourner telle quelle
+        if (str_starts_with($imagePath, 'http')) {
+            return $imagePath;
+        }
+        
+        // Construire l'URL complète
+        // Modifiez le port si nécessaire (8000 ou 8001 selon votre serveur)
+        return 'http://127.0.0.1:8000/images/activities/' . ltrim($imagePath, '/');
     }
 }

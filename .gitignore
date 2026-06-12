@@ -25,6 +25,8 @@
 /public/images/acover/
 /public/images/advertises/
 /public/images/articles/
+/public/images/gallery/
+/public/images/activities/
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###

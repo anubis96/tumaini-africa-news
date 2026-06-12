@@ -1,0 +1,131 @@
+{# templates/admin/association_manager/a_gallery/_form.html.twig #}
+{{ form_start(form, {'attr': {'class': 'space-y-6', 'enctype': 'multipart/form-data'}}) }}
+    
+    {% if form_errors(form) %}
+        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="space-y-5">
+            <div>
+                {{ form_label(form.title) }}
+                {{ form_widget(form.title) }}
+                {{ form_errors(form.title) }}
+            </div>
+
+            <div>
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+                {{ form_errors(form.description) }}
+            </div>
+        </div>
+
+        <div class="space-y-5">
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    Images
+                </label>
+                
+                <button type="button" id="add-image" class="mb-3 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600">
+                    <i class="fas fa-plus mr-2"></i>Ajouter une image
+                </button>
+                
+                <div id="images-collection" data-prototype="{{ form_widget(form.galleryImages.vars.prototype)|e('html_attr') }}" class="space-y-4">
+                    {# Les images seront ajoutées dynamiquement ici #}
+                </div>
+                
+                <div id="global-preview" class="grid grid-cols-2 md:grid-cols-3 gap-3 mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="flex justify-between items-center pt-6 border-t">
+        <a href="{{ path('app_a_gallery_index') }}" class="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg">
+            <i class="fas fa-arrow-left mr-2"></i>Retour
+        </a>
+        <button type="submit" class="px-6 py-2 bg-orange-500 text-white rounded-lg">
+            <i class="fas fa-save mr-2"></i>Créer l'album
+        </button>
+    </div>
+
+{{ form_end(form) }}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const collectionHolder = document.getElementById('images-collection');
+    const addButton = document.getElementById('add-image');
+    const globalPreview = document.getElementById('global-preview');
+    let imageCount = 0;
+    
+    function updatePreview() {
+        globalPreview.innerHTML = '';
+        const imageItems = document.querySelectorAll('.image-item');
+        
+        if (imageItems.length === 0) {
+            globalPreview.innerHTML = '<div class="col-span-full text-center text-gray-400 py-4">Aucune image sélectionnée</div>';
+            return;
+        }
+        
+        imageItems.forEach((item, idx) => {
+            const fileInput = item.querySelector('input[type="file"]');
+            if (fileInput && fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'relative group';
+                    previewDiv.innerHTML = `
+                        <div class="relative">
+                            <img src="" class="w-full h-32 object-cover rounded-lg border-2 border-amber-300">
+                            <span class="absolute top-1 right-1 bg-amber-500 text-white text-xs px-2 py-0.5 rounded-full">${idx + 1}</span>
+                        </div>
+                    `;
+                    reader.onload = function(e) {
+                        previewDiv.querySelector('img').src = e.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                    globalPreview.appendChild(previewDiv);
+                }
+            }
+        });
+    }
+    
+    addButton.addEventListener('click', function() {
+        const prototype = collectionHolder.dataset.prototype;
+        const newForm = prototype.replace(/__name__/g, imageCount);
+        const div = document.createElement('div');
+        div.className = 'image-item bg-gray-50 dark:bg-gray-900 border rounded-lg p-4 mb-4';
+        div.innerHTML = newForm;
+        
+        // Ajouter le titre et bouton supprimer
+        const header = document.createElement('div');
+        header.className = 'flex justify-between items-center mb-3';
+        header.innerHTML = `
+            <h4 class="font-medium">Image ${imageCount + 1}</h4>
+            <button type="button" class="remove-image text-red-600 hover:text-red-800">Supprimer</button>
+        `;
+        div.insertBefore(header, div.firstChild);
+        
+        const fileInput = div.querySelector('input[type="file"]');
+        if (fileInput) {
+            fileInput.addEventListener('change', updatePreview);
+        }
+        
+        const removeBtn = div.querySelector('.remove-image');
+        removeBtn.addEventListener('click', function() {
+            div.remove();
+            updatePreview();
+            // Renuméroter
+            document.querySelectorAll('.image-item h4').forEach((h4, i) => {
+                h4.textContent = `Image ${i + 1}`;
+            });
+        });
+        
+        collectionHolder.appendChild(div);
+        imageCount++;
+        updatePreview();
+    });
+});
+</script>

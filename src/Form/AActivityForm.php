@@ -6,8 +6,12 @@ use App\Entity\AActivity;
 use App\Entity\ACategory;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\All;
+use Symfony\Component\Validator\Constraints\Image;
 
 class AActivityForm extends AbstractType
 {
@@ -25,6 +29,17 @@ class AActivityForm extends AbstractType
             ->add('imageIcon')
             ->add('participants')
             ->add('beneficiaires')
+            ->add('imageFile', FileType::class, [
+                "required" => false,
+                'constraints' => [
+                    new Image(['maxSize' => '5M'])
+                ],
+                'attr' => [
+                    'class' => 'w-full px-3 py-2 border rounded-lg',
+                    'accept' => 'image/jpeg,image/png,image/webp',
+                    'multiple' => 'multiple'
+                ]
+            ])
             ->add('categories', EntityType::class, [
                 'class' => ACategory::class,
                 'choice_label' => 'id',

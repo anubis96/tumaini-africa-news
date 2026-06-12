@@ -1,0 +1,75 @@
+{# templates/admin/association_manager/a_gallery/index.html.twig #}
+{% extends 'admin/association_manager/layout.html.twig' %}
+
+{% block association_title %}Galeries - Association{% endblock %}
+
+{% block association_content %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+            <h2 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <i class="fas fa-images text-amber-500"></i>
+                Galeries photos
+            </h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {{ galleries|length }} album(s) photo
+            </p>
+        </div>
+        <a href="{{ path('app_a_gallery_new') }}" 
+           class="bg-orange-500 text-white px-5 py-2.5 rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
+            <i class="fas fa-plus"></i>
+            Nouvel album
+        </a>
+    </div>
+
+    <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for gallery in galleries %}
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition group">
+                    {# Aperçu de la première image #}
+                    <div class="h-48 bg-gray-300 dark:bg-gray-700 bg-cover bg-center relative" 
+                         style="background-image: url('{{ gallery.imageNames|length ? '/images/gallery/' ~ gallery.imageNames[0] : '/images/default-gallery.jpg' }}')">
+                        <div class="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                            <a href="{{ path('app_a_gallery_show', {'id': gallery.id}) }}" 
+                               class="bg-white/90 text-gray-800 px-4 py-2 rounded-lg mx-2 hover:bg-white transition">
+                                <i class="fas fa-eye mr-2"></i>Voir
+                            </a>
+                            <a href="{{ path('app_a_gallery_edit', {'id': gallery.id}) }}" 
+                               class="bg-amber-500 text-white px-4 py-2 rounded-lg mx-2 hover:bg-amber-600 transition">
+                                <i class="fas fa-edit mr-2"></i>Modifier
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <div class="p-4">
+                        <h3 class="font-bold text-gray-800 dark:text-white mb-1 line-clamp-1">{{ gallery.title }}</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-2 line-clamp-2">
+                            {{ gallery.description|default('Aucune description')|slice(0, 80) }}{{ gallery.description|default('')|length > 80 ? '...' : '' }}
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-gray-400 mt-2">
+                            <span class="flex items-center gap-1">
+                                <i class="fas fa-images text-amber-500"></i>
+                                {{ gallery.imageNames|length }} image(s)
+                            </span>
+                            <span class="flex items-center gap-1">
+                                <i class="fas fa-calendar-alt text-amber-500"></i>
+                                {{ gallery.createdAt ? gallery.createdAt|date('d/m/Y') : 'Date inconnue' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-span-full text-center py-12 text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-camera text-6xl mb-4 block text-gray-300 dark:text-gray-600"></i>
+                    <p class="text-lg mb-2">Aucun album photo pour le moment</p>
+                    <p class="text-sm mb-4">Commencez par créer votre premier album photo</p>
+                    <a href="{{ path('app_a_gallery_new') }}" class="inline-flex items-center gap-2 bg-amber-500 text-white px-5 py-2.5 rounded-lg hover:bg-amber-600 transition">
+                        <i class="fas fa-plus"></i>
+                        Créer le premier album
+                    </a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

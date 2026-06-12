@@ -90,6 +90,20 @@
                     <span class="bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded-full">{{ categories_count }}</span>
                 {% endif %}
             </a>
+            <a href="{{ path('app_a_gallery_index') }}" 
+                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-t-lg transition-all
+                {% if app.request.get('_route') starts with 'app_a_gallery' %}
+                    text-amber-600 border-b-2 border-amber-600 dark:text-amber-400 dark:border-amber-400
+                {% else %}
+                    text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300
+                {% endif %}">
+                    <i class="fas fa-images"></i>
+                    Galeries
+                    {% set galleries_count = galleries_count|default(0) %}
+                    {% if galleries_count > 0 %}
+                        <span class="bg-pink-100 text-pink-800 text-xs px-2 py-0.5 rounded-full">{{ galleries_count }}</span>
+                    {% endif %}
+            </a>
         </nav>
         </div>
     </div>

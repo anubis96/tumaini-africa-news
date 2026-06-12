@@ -1,0 +1,58 @@
+{# templates/admin/association_manager/a_gallery/new.html.twig #}
+{% extends 'admin/association_manager/layout.html.twig' %}
+
+{% block association_content %}
+<div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border">
+    <div class="px-6 py-4 border-b bg-gradient-to-r from-amber-50 to-orange-50">
+        <h1 class="text-xl font-bold">Nouvel album photo</h1>
+    </div>
+
+    <div class="p-6">
+        {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+            
+            <div class="mb-4">
+                {{ form_label(form.title) }}
+                {{ form_widget(form.title) }}
+            </div>
+            
+            <div class="mb-4">
+                {{ form_label(form.description) }}
+                {{ form_widget(form.description) }}
+            </div>
+            
+            <div class="mb-4">
+                {{ form_label(form.imageFiles) }}
+                {{ form_widget(form.imageFiles) }}
+                <p class="text-xs text-gray-500 mt-1">Sélectionnez plusieurs images (JPG, PNG, WEBP max 5Mo)</p>
+                <div id="preview" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4"></div>
+            </div>
+            
+            <div class="flex justify-between pt-4 border-t">
+                <a href="{{ path('app_a_gallery_index') }}" class="px-4 py-2 bg-gray-200 rounded-lg">Retour</a>
+                <button type="submit" class="px-4 py-2 bg-amber-500 text-white rounded-lg">Créer</button>
+            </div>
+            
+        {{ form_end(form) }}
+    </div>
+</div>
+
+<script>
+document.querySelector('input[type="file"]').addEventListener('change', function(e) {
+    const preview = document.getElementById('preview');
+    preview.innerHTML = '';
+    const files = Array.from(e.target.files);
+    
+    files.forEach(file => {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            const div = document.createElement('div');
+            div.className = 'relative';
+            div.innerHTML = `<img src="" class="w-full h-32 object-cover rounded-lg border">`;
+            reader.onload = function(e) { div.querySelector('img').src = e.target.result; };
+            reader.readAsDataURL(file);
+            preview.appendChild(div);
+        }
+    });
+});
+</script>
+{% endblock %}

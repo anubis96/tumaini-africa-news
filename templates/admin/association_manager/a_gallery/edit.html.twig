@@ -1,0 +1,13 @@
+{% extends 'admin/association_manager/layout.html.twig' %}
+
+{% block association_title %}Gelerie images - Association{% endblock %}
+
+{% block association_content %}
+    <h1>Edit AGallery</h1>
+
+    {{ include('admin/association_manager/a_gallery/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('app_a_gallery_index') }}">back to list</a>
+
+    {{ include('admin/association_manager/a_gallery/_delete_form.html.twig') }}
+{% endblock %}

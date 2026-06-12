@@ -3,11 +3,16 @@
 namespace App\Entity;
 
 use App\Repository\AActivityRepository;
+use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 #[ORM\Entity(repositoryClass: AActivityRepository::class)]
+#[Vich\Uploadable()]
 class AActivity
 {
     #[ORM\Id]
@@ -30,7 +35,15 @@ class AActivity
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     #[Groups(['api'])]
-    private ?\DateTimeImmutable $date = null;
+    private ?DateTimeImmutable $date = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['api'])]
+    private ?string $imageUrl = null;
+
+    #[Vich\UploadableField(mapping: 'activities', fileNameProperty: 'imageUrl')]
+    #[Assert\Image(maxSize: '5M')]
+    private ?File $imageFile = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['api'])]
@@ -51,6 +64,10 @@ class AActivity
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['api'])]
     private ?string $beneficiaires = null;
+
+    #[ORM\Column(nullable: true)]
+    #[Groups(['api'])]
+    private ?DateTimeImmutable $updatedAt;
 
     #[ORM\ManyToOne(inversedBy: 'aActivities')]
     private ?ACategory $categories = null;
@@ -95,19 +112,55 @@ class AActivity
 
         return $this;
     }
+        public function getImageUrl(): ?string
+    {
+        return $this->imageUrl;
+    }
 
-    public function getDate(): ?\DateTimeImmutable
+    public function setImageUrl(?string $imageUrl): static
+    {
+        $this->imageUrl = $imageUrl;
+
+        return $this;
+    }
+    public function getImageFile(): ?File
+    {
+        return $this->imageFile;
+    }
+
+    public function setImageFile(?File $imageFile): static
+    {
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            $this->updatedAt = new DateTimeImmutable();
+        }
+
+        return $this;
+    }
+
+    public function getDate(): ?DateTimeImmutable
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeImmutable $date): static
+    public function setDate(DateTimeImmutable $date): static
     {
         $this->date = $date;
 
         return $this;
     }
 
+    public function setUpdatedAt(?DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
+        return $this;
+    }
+
+    public function getUdatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
     public function getLieu(): ?string
     {
         return $this->lieu;

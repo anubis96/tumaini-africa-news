@@ -1,6 +1,3 @@
-{# Ce template n'est plus utilisé directement car la suppression est gérée via modale #}
-{# Gardez-le pour compatibilité mais utilisez la modale à la place #}
-
 <form method="post" action="{{ path('app_a_activity_delete', {'id': a_activity.id}) }}" 
       onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette activité ? Cette action est irréversible.');"
       style="display: inline;">

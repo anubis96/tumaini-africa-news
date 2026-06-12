@@ -1,5 +1,5 @@
 {# templates/admin/association_manager/a_activity/_form.html.twig #}
-{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+{{ form_start(form, {'attr': {'class': 'space-y-6', 'enctype': 'multipart/form-data'}}) }}
     {# Erreurs du formulaire #}
     {% if form_errors(form) %}
         <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded" role="alert">
@@ -87,6 +87,48 @@
         </div>
     </div>
 
+    {# Section Image Upload #}
+    <div class="border-t border-gray-200 dark:border-gray-700 pt-6 mt-4">
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+            <i class="fas fa-image text-amber-500"></i>
+            Image de l'activité
+        </h3>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {# Upload d'image #}
+            <div>
+                {{ form_label(form.imageFile, 'Télécharger une image', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+                {{ form_widget(form.imageFile, {'attr': {'class': 'w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100'}}) }}
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Formats acceptés : JPG, PNG, WEBP (max. 5MB)</p>
+                {{ form_errors(form.imageFile) }}
+            </div>
+
+            {# Aperçu de l'image #}
+            <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Aperçu</label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg bg-gray-50 dark:bg-gray-700">
+                    <div class="space-y-1 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="flex text-sm text-gray-600 dark:text-gray-400">
+                            <label for="{{ form.imageFile.vars.id }}" class="relative cursor-pointer rounded-md font-medium text-amber-600 hover:text-amber-500 focus-within:outline-none">
+                                <span>Aucune image sélectionnée</span>
+                            </label>
+                        </div>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, WEBP jusqu'à 5MB</p>
+                    </div>
+                </div>
+                {% if a_activity.imageUrl is defined and a_activity.imageUrl %}
+                    <div class="mt-3 image-preview">
+                        <p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Image actuelle :</p>
+                        <img src="{{ vich_uploader_asset(a_activity, 'imageFile') }}" class="max-h-40 rounded-lg shadow-md" alt="{{ a_activity.title }}">
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
     {# Boutons d'action #}
     <div class="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
         <a href="{{ path('app_a_activity_index') }}" 
@@ -94,9 +136,37 @@
             <i class="fas fa-arrow-left mr-2"></i>Retour
         </a>
         <button type="submit" 
-                class="px-6 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
+                class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
             <i class="fas fa-save"></i>
             {{ button_label|default('Enregistrer') }}
         </button>
     </div>
 {{ form_end(form) }}
+
+<script>
+    // Preview de l'image avant upload
+    const imageInput = document.querySelector('#a_activity_form_imageFile');
+    const imagePreview = document.querySelector('.image-preview');
+    
+    if (imageInput) {
+        imageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    if (imagePreview) {
+                        imagePreview.innerHTML = `<p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Nouvelle image :</p>
+                                                  <img src="${event.target.result}" class="max-h-40 rounded-lg shadow-md" alt="Aperçu">`;
+                    } else {
+                        const newPreview = document.createElement('div');
+                        newPreview.className = 'mt-3 image-preview';
+                        newPreview.innerHTML = `<p class="text-sm text-gray-600 dark:text-gray-400 mb-2">Nouvelle image :</p>
+                                                <img src="${event.target.result}" class="max-h-40 rounded-lg shadow-md" alt="Aperçu">`;
+                        imageInput.parentElement.parentElement.appendChild(newPreview);
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+</script>

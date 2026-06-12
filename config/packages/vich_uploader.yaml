@@ -1,5 +1,7 @@
 vich_uploader:
     db_driver: orm
+    metadata:
+        type: attribute
 
     mappings:
        articles:
@@ -24,9 +26,20 @@ vich_uploader:
            delete_on_remove: true
            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
        
+       gallery_images:
+            uri_prefix: /images/gallery
+            upload_destination: '%kernel.project_dir%/public/images/gallery'
+            delete_on_remove: true
+            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+       
        advertises:
            uri_prefix: /images/advertises
            upload_destination: '%kernel.project_dir%/public/images/advertises'
+           namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
+       
+       activities:
+           uri_prefix: /images/activities
+           upload_destination: '%kernel.project_dir%/public/images/activities'
            namer: Vich\UploaderBundle\Naming\SmartUniqueNamer
            
            inject_on_load: false

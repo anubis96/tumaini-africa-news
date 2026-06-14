@@ -1,0 +1,191 @@
+{# templates/admin/analytics/index.html.twig #}
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}Analytics - Statistiques{% endblock %}
+
+{% block in_body %}
+<div class="w-full max-w-full bg-gray-50 dark:bg-gray-900 p-4 overflow-x-hidden">
+    
+    <!-- En-tête -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-bold bg-primary-500 to-secondary-500 bg-clip-text text-transparent flex items-center gap-2">
+                <svg class="w-7 h-7 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+                Statistiques
+            </h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Du {{ start_date }} au {{ end_date }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Cartes principales -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border-l-4 border-primary-500">
+            <p class="text-sm text-gray-500 dark:text-gray-400">Total visites</p>
+            <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ total_visits }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border-l-4 border-secondary-500">
+            <p class="text-sm text-gray-500 dark:text-gray-400">Visiteurs uniques</p>
+            <p class="text-3xl font-bold text-gray-800 dark:text-white">{{ unique_visitors }}</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border-l-4 border-green-500">
+            <p class="text-sm text-gray-500 dark:text-gray-400">Taux de rebond</p>
+            <p class="text-3xl font-bold text-gray-800 dark:text-white">0%</p>
+        </div>
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5 border-l-4 border-orange-500">
+            <p class="text-sm text-gray-500 dark:text-gray-400">Pages / visite</p>
+            <p class="text-3xl font-bold text-gray-800 dark:text-white">0</p>
+        </div>
+    </div>
+
+    <!-- Graphiques 2 colonnes -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        
+        <!-- Appareils -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+                Appareils utilisés
+            </h3>
+            <canvas id="devicesChart" height="200"></canvas>
+        </div>
+
+        <!-- Navigateurs -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.66 0 3-4 3-9s-1.34-9-3-9m0 18c-1.66 0-3-4-3-9s1.34-9 3-9"/>
+                </svg>
+                Navigateurs
+            </h3>
+            <canvas id="browsersChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        
+        <!-- Systèmes d'exploitation -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 3h14a2 2 0 012 2v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                </svg>
+                Systèmes d'exploitation
+            </h3>
+            <canvas id="osChart" height="200"></canvas>
+        </div>
+
+        <!-- Pays -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-5">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white mb-4 flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Pays
+            </h3>
+            <canvas id="countriesChart" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Pages les plus vues -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-white flex items-center gap-2">
+                <svg class="w-5 h-5 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/>
+                </svg>
+                Pages les plus consultées
+            </h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700">
+                    <tr>
+                        <th class="px-6 py-3">Page</th>
+                        <th class="px-6 py-3 text-center">Vues</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for page in top_pages %}
+                    <tr class="border-b dark:border-gray-700">
+                        <td class="px-6 py-4">{{ page.page }}</td>
+                        <td class="px-6 py-4 text-center">
+                            <span class="px-2 py-1 bg-primary-100 text-primary-700 rounded-full text-xs font-semibold">{{ page.views }}</span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Appareils
+    const devicesCtx = document.getElementById('devicesChart').getContext('2d');
+    new Chart(devicesCtx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ devices|map(d => d.device)|json_encode|raw }},
+            datasets: [{
+                data: {{ devices|map(d => d.count)|json_encode|raw }},
+                backgroundColor: ['#1a2a4f', '#2a4a7f', '#4777af', '#7599c3'],
+                borderWidth: 0
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: true }
+    });
+
+    // Navigateurs
+    const browsersCtx = document.getElementById('browsersChart').getContext('2d');
+    new Chart(browsersCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ browsers|map(b => b.browser)|json_encode|raw }},
+            datasets: [{
+                label: 'Visites',
+                data: {{ browsers|map(b => b.count)|json_encode|raw }},
+                backgroundColor: '#2a4a7f',
+                borderRadius: 8
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: true }
+    });
+
+    // Systèmes d'exploitation
+    const osCtx = document.getElementById('osChart').getContext('2d');
+    new Chart(osCtx, {
+        type: 'pie',
+        data: {
+            labels: {{ os|map(o => o.os)|json_encode|raw }},
+            datasets: [{
+                data: {{ os|map(o => o.count)|json_encode|raw }},
+                backgroundColor: ['#1a2a4f', '#2a4a7f', '#4777af', '#7599c3', '#a3bbd7']
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: true }
+    });
+
+    // Pays
+    const countriesCtx = document.getElementById('countriesChart').getContext('2d');
+    new Chart(countriesCtx, {
+        type: 'bar',
+        data: {
+            labels: {{ countries|map(c => c.country)|json_encode|raw }},
+            datasets: [{
+                label: 'Visiteurs',
+                data: {{ countries|map(c => c.count)|json_encode|raw }},
+                backgroundColor: '#4777af',
+                borderRadius: 8
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: true, indexAxis: 'y' }
+    });
+</script>
+{% endblock %}

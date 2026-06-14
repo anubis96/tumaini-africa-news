@@ -10,7 +10,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-
 #[Route('/api/association/activities', name: 'api_association_activities_')]
 class AActivityApiController extends AbstractController
 {

@@ -1,0 +1,51 @@
+<?php
+// src/Controller/Admin/AnalyticsController.php
+
+namespace App\Controller\Admin;
+
+use App\Repository\AnalyticsRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/admin/analytics', name: 'admin_analytics_')]
+class AnalyticController extends AbstractController
+{
+    #[Route('/', name: 'index', methods: ['GET'])]
+    public function index(AnalyticsRepository $analyticsRepository): Response
+    {
+        $startDate = new \DateTime('-30 days');
+        $endDate = new \DateTime();
+
+        // Statistiques globales
+        $totalVisits = $analyticsRepository->getTotalVisits($startDate, $endDate);
+        $uniqueVisitors = $analyticsRepository->getUniqueVisitors($startDate, $endDate);
+        
+        // Appareils
+        $devices = $analyticsRepository->getDeviceStats($startDate, $endDate);
+        $browsers = $analyticsRepository->getBrowserStats($startDate, $endDate);
+        $os = $analyticsRepository->getOsStats($startDate, $endDate);
+        
+        // Géolocalisation
+        $countries = $analyticsRepository->getCountryStats($startDate, $endDate);
+        
+        // Pages les plus vues
+        $topPages = $analyticsRepository->getPageViewsStats($startDate, $endDate);
+        
+        // Visites quotidiennes
+        $dailyVisits = $analyticsRepository->getDailyVisits($startDate, $endDate);
+        
+        return $this->render('admin/analytics/index.html.twig', [
+            'total_visits' => $totalVisits,
+            'unique_visitors' => $uniqueVisitors,
+            'devices' => $devices,
+            'browsers' => $browsers,
+            'os' => $os,
+            'countries' => $countries,
+            'top_pages' => $topPages,
+            'daily_visits' => $dailyVisits,
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+        ]);
+    }
+}

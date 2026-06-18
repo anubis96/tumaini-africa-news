@@ -81,6 +81,49 @@ final class HomeController extends AbstractController
             default => $popularTagsWeek,
         };
 
+        $categoryInternational = $categoryRepository->findOneBy(['slug' => 'actualite-internationale']);
+        $categoryFaitDivers = $categoryRepository->findOneBy(['slug' => 'faits-divers']);
+        $categoryDivertissement = $categoryRepository->findOneBy(['slug' => 'divertissement']);
+        $categorySport = $categoryRepository->findOneBy(['slug' => 'sport']);
+
+        // Récupérer les articles de chaque catégorie (5 derniers)
+        $internationalArticles = [];
+        $faitDiversArticles = [];
+        $divertissementArticles = [];
+        $sportArticles = [];
+
+        if ($categoryInternational) {
+            $internationalArticles = $articleRepo->findBy(
+                ['category' => $categoryInternational, 'isPublished' => true],
+                ['publishedAt' => 'DESC'],
+                5
+            );
+        }
+
+        if ($categoryFaitDivers) {
+            $faitDiversArticles = $articleRepo->findBy(
+                ['category' => $categoryFaitDivers, 'isPublished' => true],
+                ['publishedAt' => 'DESC'],
+                5
+            );
+        }
+
+        if ($categoryDivertissement) {
+            $divertissementArticles = $articleRepo->findBy(
+                ['category' => $categoryDivertissement, 'isPublished' => true],
+                ['publishedAt' => 'DESC'],
+                5
+            );
+        }
+
+        if ($categorySport) {
+            $sportArticles = $articleRepo->findBy(
+                ['category' => $categorySport, 'isPublished' => true],
+                ['publishedAt' => 'DESC'],
+                5
+            );
+        }
+
         return $this->render('home/index.html.twig', [
             'controller_name' => 'Acceuil !',
             'lastFirst' => $nonUrgentLastThree[0] ?? null,
@@ -105,6 +148,27 @@ final class HomeController extends AbstractController
             'most_used_tags' => $mostUsedTags,
             'tags_stats' => $tagsStats,
             'selected_period' => $period,
+
+            'category_international' => [
+                'name' => $categoryInternational ? $categoryInternational->getName() : 'International',
+                'slug' => $categoryInternational ? $categoryInternational->getSlug() : 'international',
+                'articles' => $internationalArticles,
+            ],
+            'category_fait_divers' => [
+                'name' => $categoryFaitDivers ? $categoryFaitDivers->getName() : 'Faits divers',
+                'slug' => $categoryFaitDivers ? $categoryFaitDivers->getSlug() : 'faits-divers',
+                'articles' => $faitDiversArticles,
+            ],
+            'category_divertissement' => [
+                'name' => $categoryDivertissement ? $categoryDivertissement->getName() : 'Divertissement',
+                'slug' => $categoryDivertissement ? $categoryDivertissement->getSlug() : 'divertissement',
+                'articles' => $divertissementArticles,
+            ],
+            'category_sport' => [
+                'name' => $categorySport ? $categorySport->getName() : 'Sport',
+                'slug' => $categorySport ? $categorySport->getSlug() : 'sport',
+                'articles' => $sportArticles,
+            ]
         ]);
     }
 

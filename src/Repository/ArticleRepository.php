@@ -7,6 +7,7 @@ use App\Entity\Category;
 use App\Entity\Tag;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -311,6 +312,16 @@ public function findTrendingArticles(int $limit = 10): array
         return (int) $qb->getQuery()->getSingleScalarResult();
     }
 
+    public function paginateQuery(QueryBuilder $qb, int $page = 1, int $limit = 20): PaginationInterface
+    {
+        $query = $qb->getQuery();
+        
+        return $this->paginator->paginate(
+            $query,
+            $page,
+            $limit
+        );
+    }
 
 
 //    /**

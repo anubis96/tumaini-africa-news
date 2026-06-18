@@ -23,7 +23,7 @@
             {{ form_errors(form.category) }}
         </div>
         <div>
-            {{ form_label(form.tags, 'Tags', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+            {{ form_label(form.tags, 'Mots clés associés', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
             <div class="relative">
                 {{ form_widget(form.tags, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white', 'size': 6}}) }}
                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs tags</p>
@@ -87,6 +87,14 @@
                 {{ form_widget(form.isUrgent, {'attr': {'class': 'w-4 h-4 text-amber-600 bg-gray-100 border-gray-300 rounded focus:ring-amber-500 dark:focus:ring-amber-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'}}) }}
                 {{ form_label(form.isUrgent, 'Marquer comme urgent', {'label_attr': {'class': 'ml-2 text-sm font-medium text-gray-700 dark:text-gray-300'}}) }}
             </div>
+        </div>
+        <div class="flex flex-wrap gap-6">
+        <h3>Géolicalisation</h3>
+        {{form_widget(form.geoScope)}}
+        {{form_widget(form.geoContinent)}}
+        {{form_widget(form.geoCountry)}}
+        {{form_widget(form.geoRegion)}}
+        {{form_widget(form.geoCity)}}
         </div>
     </div>
 

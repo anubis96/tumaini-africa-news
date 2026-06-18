@@ -372,46 +372,256 @@
             </div>
         </div>
     </section>
- 
-    {# <section class="py-12 bg-gradient-to-b from-gray-50 to-white">
-        <div class="container mx-auto px-4">
-            <div class="mb-8 text-center">
-                <div class="flex items-center justify-center gap-2 mb-2">
-                    <span class="text-3xl">🏷️</span>
-                    <h2 class="text-3xl font-bold text-gray-800">Sujets les plus discutés</h2>
-                </div>
-                <div class="mx-auto mt-2 h-1 w-20 rounded-full bg-amber-500"></div>
-                <p class="mt-3 text-gray-500">Les thèmes qui animent la communauté</p>
-            </div>
-            
-            <div class="flex flex-wrap justify-center gap-3">
-                {% for tag in popular_tags %}
-                    <a href="{{ path('app_tag_client_show', {'slug': tag.slug}) }}" 
-                    class="group inline-flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 hover:scale-110 hover:shadow-lg"
-                    style="background-color: {{ tag.color }}15; color: {{ tag.color }}; border: 1px solid {{ tag.color }}30;">
-                        <span class="w-2 h-2 rounded-full" style="background-color: {{ tag.color }}"></span>
-                        <span class="font-medium">#{{ tag.name }}</span>
-                        <span class="text-xs opacity-60">({{ tag.usageCount }})</span>
-                        <svg class="w-3 h-3 group-hover:translate-x-0.5 transition-transform opacity-60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+    {% if category_international is defined and category_international.articles|length > 0 %}
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🌍</span>
+                        <h2 class="text-2xl font-bold text-gray-800">International</h2>
+                        <span class="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">À la une</span>
+                    </div>
+                    <a href="{{ path('app_category_public', {'slug': 'international'}) }}" 
+                    class="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1 group">
+                        Voir plus
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
                         </svg>
                     </a>
-                {% else %}
-                    <p class="text-gray-500">Aucun tag populaire pour le moment</p>
-                {% endfor %}
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Article principal (1er) -->
+                    <div class="lg:col-span-1">
+                        <a href="{{ path('app_single_article_public', {'slug': category_international.articles[0].slug}) }}" 
+                        class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
+                            <div class="relative h-64 lg:h-72 overflow-hidden">
+                                <img src="{{ vich_uploader_asset(category_international.articles[0], 'imageFile')|default('images/static/default.png') }}" 
+                                    alt="{{ category_international.articles[0].title }}"
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                                    <span class="inline-block bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-2">À la une</span>
+                                    <h3 class="text-xl font-bold group-hover:text-amber-300 transition-colors line-clamp-3">{{ category_international.articles[0].title }}</h3>
+                                    <p class="text-xs text-gray-300 mt-1">{{ category_international.articles[0].publishedAt|date('d/m/Y') }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- 4 articles secondaires -->
+                    <div class="lg:col-span-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% for article in category_international.articles|slice(1, 4) %}
+                            <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
+                            class="group flex gap-4 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-all hover:shadow-md">
+                                <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="{{ vich_uploader_asset(article, 'imageFile')|default('images/static/default.png') }}" 
+                                        alt="{{ article.title }}"
+                                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                </div>
+                                <div class="flex-1">
+                                    <span class="text-xs text-amber-600 font-semibold uppercase">{{ article.category.name }}</span>
+                                    <h4 class="text-sm font-semibold text-gray-800 group-hover:text-amber-600 transition-colors line-clamp-2">{{ article.title }}</h4>
+                                    <p class="text-xs text-gray-400 mt-1">{{ article.publishedAt|date('d/m/Y') }}</p>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="mt-6 text-center">
-                <a href="{{ path('app_tags_cloud') }}" 
-                class="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium transition-colors">
-                    Voir tous les tags
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                    </svg>
-                </a>
+        </section>
+    {% endif %}
+
+    {# Catégorie Fait sport #}
+    {% if category_sport is defined and category_sport.articles|length > 0 %}
+        <section class="py-12 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🔍</span>
+                        <h2 class="text-2xl font-bold text-gray-800">Sports</h2>
+                        <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Dernières nouvelles</span>
+                    </div>
+                    <a href="{{ path('app_category_public', {'slug': 'sport'}) }}" 
+                    class="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1 group">
+                        Voir plus
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Article principal (1er) -->
+                    <div class="lg:col-span-1">
+                        <a href="{{ path('app_single_article_public', {'slug': category_sport.articles[0].slug}) }}" 
+                        class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
+                            <div class="relative h-64 lg:h-72 overflow-hidden">
+                                <img src="{{ vich_uploader_asset(category_sport.articles[0], 'imageFile')|default('images/static/default.png') }}" 
+                                    alt="{{ category_sport.articles[0].title }}"
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                                    <span class="inline-block bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-2">🔴 Dernière minute</span>
+                                    <h3 class="text-xl font-bold group-hover:text-amber-300 transition-colors line-clamp-3">{{ category_sport.articles[0].title }}</h3>
+                                    <p class="text-xs text-gray-300 mt-1">{{ category_sport.articles[0].publishedAt|date('d/m/Y') }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- 4 articles secondaires -->
+                    <div class="lg:col-span-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% for article in category_sport.articles|slice(1, 4) %}
+                            <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
+                            class="group flex gap-4 bg-white rounded-xl p-3 hover:bg-gray-100 transition-all hover:shadow-md">
+                                <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="{{ vich_uploader_asset(article, 'imageFile')|default('images/static/default.png') }}" 
+                                        alt="{{ article.title }}"
+                                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                </div>
+                                <div class="flex-1">
+                                    <span class="text-xs text-red-600 font-semibold uppercase">{{ article.category.name }}</span>
+                                    <h4 class="text-sm font-semibold text-gray-800 group-hover:text-amber-600 transition-colors line-clamp-2">{{ article.title }}</h4>
+                                    <p class="text-xs text-gray-400 mt-1">{{ article.publishedAt|date('d/m/Y') }}</p>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </section> #}
+        </section>
+    {% endif %}
+
+    {# Catégorie Divertissement #}
+    {% if category_divertissement is defined and category_divertissement.articles|length > 0 %}
+        <section class="py-12 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🎬</span>
+                        <h2 class="text-2xl font-bold text-gray-800">Divertissement</h2>
+                        <span class="text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">Culture & Loisirs</span>
+                    </div>
+                    <a href="{{ path('app_category_public', {'slug': 'divertissement'}) }}" 
+                    class="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1 group">
+                        Voir plus
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Article principal (1er) -->
+                    <div class="lg:col-span-1">
+                        <a href="{{ path('app_single_article_public', {'slug': category_divertissement.articles[0].slug}) }}" 
+                        class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
+                            <div class="relative h-64 lg:h-72 overflow-hidden">
+                                <img src="{{ vich_uploader_asset(category_divertissement.articles[0], 'imageFile')|default('images/static/default.png') }}" 
+                                    alt="{{ category_divertissement.articles[0].title }}"
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                                    <span class="inline-block bg-purple-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-2">🎭 À découvrir</span>
+                                    <h3 class="text-xl font-bold group-hover:text-amber-300 transition-colors line-clamp-3">{{ category_divertissement.articles[0].title }}</h3>
+                                    <p class="text-xs text-gray-300 mt-1">{{ category_divertissement.articles[0].publishedAt|date('d/m/Y') }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- 4 articles secondaires -->
+                    <div class="lg:col-span-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% for article in category_divertissement.articles|slice(1, 4) %}
+                            <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
+                            class="group flex gap-4 bg-gray-50 rounded-xl p-3 hover:bg-purple-50 transition-all hover:shadow-md">
+                                <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="{{ vich_uploader_asset(article, 'imageFile')|default('images/static/default.png') }}" 
+                                        alt="{{ article.title }}"
+                                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                </div>
+                                <div class="flex-1">
+                                    <span class="text-xs text-purple-600 font-semibold uppercase">{{ article.category.name }}</span>
+                                    <h4 class="text-sm font-semibold text-gray-800 group-hover:text-purple-600 transition-colors line-clamp-2">{{ article.title }}</h4>
+                                    <p class="text-xs text-gray-400 mt-1">{{ article.publishedAt|date('d/m/Y') }}</p>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
+
+    {# Catégorie Fait divers #}
+    {% if category_fait_divers is defined and category_fait_divers.articles|length > 0 %}
+        <section class="py-12 bg-gray-50">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl">🔍</span>
+                        <h2 class="text-2xl font-bold text-gray-800">Faits divers</h2>
+                        <span class="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">Dernières nouvelles</span>
+                    </div>
+                    <a href="{{ path('app_category_public', {'slug': 'faits-divers'}) }}" 
+                    class="text-sm text-amber-600 hover:text-amber-700 font-medium flex items-center gap-1 group">
+                        Voir plus
+                        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Article principal (1er) -->
+                    <div class="lg:col-span-1">
+                        <a href="{{ path('app_single_article_public', {'slug': category_fait_divers.articles[0].slug}) }}" 
+                        class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
+                            <div class="relative h-64 lg:h-72 overflow-hidden">
+                                <img src="{{ vich_uploader_asset(category_fait_divers.articles[0], 'imageFile')|default('images/static/default.png') }}" 
+                                    alt="{{ category_fait_divers.articles[0].title }}"
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
+                                    <span class="inline-block bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-2">🔴 Dernière minute</span>
+                                    <h3 class="text-xl font-bold group-hover:text-amber-300 transition-colors line-clamp-3">{{ category_fait_divers.articles[0].title }}</h3>
+                                    <p class="text-xs text-gray-300 mt-1">{{ category_fait_divers.articles[0].publishedAt|date('d/m/Y') }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- 4 articles secondaires -->
+                    <div class="lg:col-span-2">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% for article in category_fait_divers.articles|slice(1, 4) %}
+                            <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
+                            class="group flex gap-4 bg-white rounded-xl p-3 hover:bg-gray-100 transition-all hover:shadow-md">
+                                <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="{{ vich_uploader_asset(article, 'imageFile')|default('images/static/default.png') }}" 
+                                        alt="{{ article.title }}"
+                                        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                                </div>
+                                <div class="flex-1">
+                                    <span class="text-xs text-red-600 font-semibold uppercase">{{ article.category.name }}</span>
+                                    <h4 class="text-sm font-semibold text-gray-800 group-hover:text-amber-600 transition-colors line-clamp-2">{{ article.title }}</h4>
+                                    <p class="text-xs text-gray-400 mt-1">{{ article.publishedAt|date('d/m/Y') }}</p>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    {% endif %}
     <section class="py-12 bg-gradient-to-b from-gray-50 to-white">
         <div class="container mx-auto px-4">
             <div class="mb-8 text-center">
@@ -445,17 +655,6 @@
                         🏆 Tous les temps
                     </a>
                 </div>
-                
-                <!-- Statistiques des tags -->
-                {# {% if tags_stats %}
-                <div class="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-500">
-                    <span>📊 <strong>{{ tags_stats.total_tags }}</strong> tags actifs</span>
-                    <span>•</span>
-                    <span>📝 <strong>{{ tags_stats.total_usage }}</strong> utilisations totales</span>
-                    <span>•</span>
-                    <span>⭐ <strong>{{ tags_stats.avg_usage|round(1) }}</strong> utilisation moyenne</span>
-                </div>
-                {% endif %} #}
             </div>
             
             <div class="flex flex-wrap justify-center gap-3">
@@ -476,23 +675,6 @@
                     <p class="text-gray-500">Aucun tag populaire pour le moment</p>
                 {% endif %}
             </div>
-            
-            <!-- Tags par période (pour information) -->
-            {# <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs text-gray-400">
-                <div class="text-center">
-                    <span class="font-medium text-gray-600">🔥 3 jours</span>
-                    <span class="block">{{ popular_tags_3days|length }} tags actifs</span>
-                </div>
-                <div class="text-center">
-                    <span class="font-medium text-gray-600">📅 Cette semaine</span>
-                    <span class="block">{{ popular_tags_week|length }} tags actifs</span>
-                </div>
-                <div class="text-center">
-                    <span class="font-medium text-gray-600">📆 Ce mois</span>
-                    <span class="block">{{ popular_tags_month|length }} tags actifs</span>
-                </div>
-            </div> #}
-            
             <div class="mt-6 text-center">
                 <a href="{{ path('app_tags_cloud') }}" 
                 class="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-medium transition-colors">
@@ -505,7 +687,7 @@
         </div>
     </section>
     <!-- Section Catégories -->
-    <section class="py-12 bg-white">
+    {# <section class="py-12 bg-white">
         <div class="container mx-auto px-4">
             <div class="mb-8 text-center">
                 <h2 class="text-3xl font-bold text-gray-800">{{ 'home.explore_categories'|trans }}</h2>
@@ -535,7 +717,7 @@
                 {% endfor %}
             </div>
         </div>
-    </section>
+    </section> #}
 
 {% endblock %}
 

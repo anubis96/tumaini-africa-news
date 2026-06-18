@@ -89,7 +89,23 @@ class Article
     #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'articles')]
     #[ORM\JoinTable(name: 'article_tag')]
     private Collection $tags;
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $geoScope = null; // 'local', 'national', 'international', 'continental'
 
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $geoCountry = null; // RDC, France, USA, etc.
+
+    #[ORM\Column(length: 10, nullable: true)]
+    private ?string $geoCountryCode = null; // CD, FR, US, etc.
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $geoRegion = null; // Sud-Kivu, Île-de-France, etc.
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $geoCity = null; // Uvira, Paris, New York
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $geoContinent = null; // Afrique, Europe, Asie, etc.
     public function __construct()
     {
         $this->comments = new ArrayCollection();
@@ -385,4 +401,50 @@ class Article
         $this->tags->removeElement($tag);
         return $this;
     }
+
+        // Getters et Setters
+    public function getGeoScope(): ?string { return $this->geoScope; }
+    public function setGeoScope(?string $geoScope): static { $this->geoScope = $geoScope; return $this; }
+    
+    public function getGeoCountry(): ?string { return $this->geoCountry; }
+    public function setGeoCountry(?string $geoCountry): static { $this->geoCountry = $geoCountry; return $this; }
+    
+    public function getGeoCountryCode(): ?string { return $this->geoCountryCode; }
+    public function setGeoCountryCode(?string $geoCountryCode): static { $this->geoCountryCode = $geoCountryCode; return $this; }
+    
+    public function getGeoRegion(): ?string { return $this->geoRegion; }
+    public function setGeoRegion(?string $geoRegion): static { $this->geoRegion = $geoRegion; return $this; }
+    
+    public function getGeoCity(): ?string { return $this->geoCity; }
+    public function setGeoCity(?string $geoCity): static { $this->geoCity = $geoCity; return $this; }
+    
+    public function getGeoContinent(): ?string { return $this->geoContinent; }
+    public function setGeoContinent(?string $geoContinent): static { $this->geoContinent = $geoContinent; return $this; }
+
+    /**
+     * Récupère la région complète pour les métadonnées
+     */
+    public function getGeoFullName(): string
+    {
+        $parts = [];
+        if ($this->geoCity) {
+            $parts[] = $this->geoCity;
+        }
+        if ($this->geoRegion) {
+            $parts[] = $this->geoRegion;
+        }
+        if ($this->geoCountry) {
+            $parts[] = $this->geoCountry;
+        }
+        return implode(', ', $parts) ?: 'Monde';
+    }
+
+    /**
+     * Récupère le code pays/région pour les métadonnées
+     */
+    public function getGeoRegionCode(): string
+    {
+        return $this->geoCountryCode ?: 'XX';
+    }
+    
 }

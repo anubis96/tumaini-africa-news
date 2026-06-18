@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\Article;
 use App\Entity\Tag;
+use App\Entity\User;
 use App\Form\ArticleForm;
 use App\Repository\ArticleRepository;
 use DateTimeImmutable;
@@ -19,11 +20,49 @@ final class ArticleController extends AbstractController
     #[Route(name: 'app_article_index', methods: ['GET'])]
     public function index(ArticleRepository $articleRepository, Request $request, EntityManagerInterface $em): Response
     {
+        $page = $request->query->getInt('page', 1);
+    
+        // Récupérer le filtre auteur
+        $authorFilter = $request->query->get('author');
+        $currentUser = $this->getUser();
+        
+        // Construction de la requête
+        $qb = $articleRepository->createQueryBuilder('a')
+            ->orderBy('a.createdAt', 'DESC');
+        
+        // Filtrer par auteur
+        if ($authorFilter === 'me') {
+            // Ne montrer que les articles de l'utilisateur connecté
+            $qb->andWhere('a.author = :author')
+            ->setParameter('author', $currentUser);
+            $currentUserFilter = true;
+            $selectedAuthorId = $currentUser->getId();
+        } elseif ($authorFilter) {
+            // Filtrer par un auteur spécifique
+            $qb->andWhere('a.author = :author')
+            ->setParameter('author', $authorFilter);
+            $currentUserFilter = false;
+            $selectedAuthorId = (int) $authorFilter;
+        } else {
+            // Montrer tous les articles
+            $currentUserFilter = false;
+            $selectedAuthorId = null;
+        }
+        
+        // Pagination
+        $articles = $articleRepository->paginateQuery($qb, $page);
+        
+        // Liste des auteurs pour le filtre
+        $authors = $em->getRepository(User::class)->findAll();
+
         $page = $request->query->getInt('page', 1); // Récupère le numéro de page depuis l'URL
         
         $articles = $articleRepository->findAllPaginated($page);
         return $this->render('admin/article/index.html.twig', [
             'articles' => $articles,
+            'authors_list' => $authors,
+            'current_user_filter' => $currentUserFilter,
+            'selected_author_id' => $selectedAuthorId,
         ]);
     }
 

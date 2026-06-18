@@ -7,6 +7,7 @@ use App\Form\TagForm;
 use App\Repository\TagRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -79,6 +80,37 @@ final class TagController extends AbstractController
         }
 
         return $this->redirectToRoute('app_tag_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/search', name: 'app_tag_search', methods: ['GET'])]
+    public function search(Request $request, TagRepository $tagRepository): JsonResponse
+    {
+        $query = $request->query->get('q', '');
+        
+        if (strlen($query) < 1) {
+            return $this->json([]);
+        }
+        
+        $tags = $tagRepository->createQueryBuilder('t')
+            ->where('t.name LIKE :query')
+            ->andWhere('t.isActive = true')
+            ->setParameter('query', '%' . $query . '%')
+            ->orderBy('t.usageCount', 'DESC')
+            ->setMaxResults(20)
+            ->getQuery()
+            ->getResult();
+        
+        $data = [];
+        foreach ($tags as $tag) {
+            $data[] = [
+                'id' => $tag->getId(),
+                'name' => $tag->getName(),
+                'color' => $tag->getColor(),
+                'usageCount' => $tag->getUsageCount(),
+            ];
+        }
+        
+        return $this->json($data);
     }
 
     function generateSlug(string $string): string

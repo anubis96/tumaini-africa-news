@@ -1,0 +1,117 @@
+{# templates/admin/tag/_form.html.twig #}
+{{ form_start(form, {'attr': {'class': 'space-y-6'}}) }}
+    
+    {% if form_errors(form) %}
+        <div class="bg-red-50 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {# Nom #}
+        <div>
+            {{ form_label(form.name, 'Nom du tag', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+            {{ form_widget(form.name, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white', 'placeholder': 'Ex: Football, Politique'}}) }}
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Le slug sera généré automatiquement à partir du nom</p>
+            {{ form_errors(form.name) }}
+        </div>
+
+        {# Catégorie #}
+        <div>
+            {{ form_label(form.category, 'Catégorie', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+            {{ form_widget(form.category, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'}}) }}
+            {{ form_errors(form.category) }}
+        </div>
+
+        {# Couleur #}
+        <div>
+            {{ form_label(form.color, 'Couleur', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+            <div class="flex items-center gap-3">
+                {{ form_widget(form.color, {'attr': {'class': 'w-16 h-10 rounded-lg cursor-pointer border border-gray-300'}}) }}
+                <span class="text-sm text-gray-500 dark:text-gray-400">Choisissez une couleur distinctive pour le tag</span>
+            </div>
+            {{ form_errors(form.color) }}
+        </div>
+
+        {# Actif #}
+        <div>
+            <div class="flex items-center gap-3 pt-6">
+                {{ form_widget(form.isActive, {'attr': {'class': 'w-5 h-5 text-amber-600 rounded focus:ring-amber-500 dark:bg-gray-700 dark:border-gray-600'}}) }}
+                {{ form_label(form.isActive, 'Tag actif', {'label_attr': {'class': 'text-sm font-medium text-gray-700 dark:text-gray-300'}}) }}
+                <span class="text-xs text-gray-500 dark:text-gray-400 ml-2">(Si inactif, le tag n'apparaîtra pas sur le site)</span>
+            </div>
+            {{ form_errors(form.isActive) }}
+        </div>
+    </div>
+
+    {# Aperçu en direct #}
+    <div class="bg-gray-50 dark:bg-gray-700/30 rounded-lg p-4">
+        <h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">Aperçu</h4>
+        <div class="flex items-center gap-3">
+            <span id="previewTag" class="inline-flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium">
+                <span class="w-2 h-2 rounded-full" id="previewDot"></span>
+                #{{ form.name.vars.value|default('Nom du tag') }}
+            </span>
+            <span id="previewCategory" class="text-xs text-gray-500"></span>
+        </div>
+    </div>
+
+    {# Boutons d'action #}
+    <div class="flex justify-between items-center pt-6 border-t border-gray-200 dark:border-gray-700">
+        <a href="{{ path('app_tag_index') }}" 
+           class="px-6 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            Retour
+        </a>
+        <button type="submit" 
+                class="px-6 py-2 bg-orange-500 text-white rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
+            {{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+
+{{ form_end(form) }}
+
+<script>
+    // Aperçu en temps réel
+    const nameInput = document.querySelector('#tag_form_name');
+    const colorInput = document.querySelector('#tag_form_color');
+    const categoryInput = document.querySelector('#tag_form_category');
+    const previewTag = document.getElementById('previewTag');
+    const previewDot = document.getElementById('previewDot');
+    const previewCategory = document.getElementById('previewCategory');
+
+    function updatePreview() {
+        if (nameInput && nameInput.value) {
+            previewTag.innerHTML = `<span class="w-2 h-2 rounded-full" id="previewDot"></span> #${nameInput.value}`;
+        }
+        
+        if (colorInput && colorInput.value) {
+            previewDot.style.backgroundColor = colorInput.value;
+            previewTag.style.borderColor = colorInput.value;
+            previewTag.style.color = colorInput.value;
+        }
+        
+        if (categoryInput && categoryInput.value) {
+            const categories = {
+                'international': '🌍 International',
+                'divertissement': '🎬 Divertissement',
+                'sport': '⚽ Sport',
+                'politique': '🏛️ Politique',
+                'sante': '🏥 Santé',
+                'culture': '🎭 Culture'
+            };
+            previewCategory.textContent = categories[categoryInput.value] || '📌 Général';
+        }
+    }
+
+    if (nameInput) nameInput.addEventListener('input', updatePreview);
+    if (colorInput) colorInput.addEventListener('input', updatePreview);
+    if (categoryInput) categoryInput.addEventListener('change', updatePreview);
+    
+    updatePreview();
+</script>

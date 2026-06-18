@@ -22,7 +22,14 @@
             {{ form_widget(form.category, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white'}}) }}
             {{ form_errors(form.category) }}
         </div>
-
+        <div>
+            {{ form_label(form.tags, 'Tags', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}
+            <div class="relative">
+                {{ form_widget(form.tags, {'attr': {'class': 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white', 'size': 6}}) }}
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Maintenez Ctrl (Cmd sur Mac) pour sélectionner plusieurs tags</p>
+            </div>
+            {{ form_errors(form.tags) }}
+        </div>
         {# Contenu (CKEditor) #}
         <div>
             {{ form_label(form.content, 'Contenu', {'label_attr': {'class': 'block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'}}) }}

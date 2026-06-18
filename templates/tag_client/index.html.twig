@@ -1,0 +1,205 @@
+{# templates/tag/show.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}#{{ tag.name }} — TUMAINI AFRICA NEWS{% endblock %}
+
+{% block meta %}
+    {{ parent() }}
+    <meta name="description" content="Articles taggés avec #{{ tag.name }} - Découvrez tous les articles liés à ce sujet sur TUMAINI AFRICA NEWS">
+    <meta property="og:title" content="#{{ tag.name }} — TUMAINI AFRICA NEWS">
+    <meta property="og:description" content="Articles taggés avec #{{ tag.name }}">
+    <meta property="og:url" content="{{ app.request.uri }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="#{{ tag.name }} — TUMAINI AFRICA NEWS">
+    <meta name="twitter:description" content="Articles taggés avec #{{ tag.name }}">
+{% endblock %}
+
+{% block body %}
+
+<!-- Page Header -->
+<section class="relative pt-32 pb-20 overflow-hidden" style="background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(212,175,55,0.12) 0%, transparent 70%), #0a0704;">
+    <div class="absolute inset-0 opacity-[0.1]" style="background-image: linear-gradient(rgba(212,175,55,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,0.5) 1px,transparent 1px); background-size: 60px 60px;"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-3xl">
+            <div class="flex items-center gap-2 mb-4">
+                <a href="{{ path('app_home') }}" class="text-amber-700 hover:text-amber-500 text-sm transition-colors">Accueil</a>
+                <span class="text-amber-800">/</span>
+                <a href="{{ path('app_tags_cloud') }}" class="text-amber-700 hover:text-amber-500 text-sm transition-colors">Tags</a>
+                <span class="text-amber-800">/</span>
+                <span class="text-amber-400 text-sm">{{ tag.name }}</span>
+            </div>
+            
+            <div class="flex items-center gap-4 mb-4 flex-wrap">
+                <span class="text-6xl">🏷️</span>
+                <div>
+                    <h1 class="font-display text-4xl sm:text-5xl text-amber-100 font-bold">
+                        <span class="inline-flex items-center gap-2 px-4 py-2 rounded-full" style="background-color: {{ tag.color }}20; border: 1px solid {{ tag.color }}40;">
+                            <span class="w-3 h-3 rounded-full" style="background-color: {{ tag.color }}"></span>
+                            #{{ tag.name }}
+                        </span>
+                    </h1>
+                    <p class="text-amber-500 text-lg mt-2">
+                        {{ articles|length }} article(s) taggés avec ce mot-clé
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Articles Grid -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {% if articles|length > 0 %}
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {% for article in articles %}
+                <div class="reveal card-hover group block bg-gradient-to-b from-[#140d05] to-[#0f0903] border border-amber-900/30 hover:border-amber-700/50 rounded-2xl overflow-hidden">
+<div class="reveal card-hover group block bg-gradient-to-b from-[#140d05] to-[#0f0903] border border-amber-900/30 hover:border-amber-700/50 rounded-2xl overflow-hidden">
+                    
+                    <!-- Card Header -->
+                    <div class="relative h-48 bg-gradient-to-br from-amber-900/40 via-orange-950/60 to-[#0f0903] flex items-center justify-center overflow-hidden">
+                        {% if article.imageUrl %}
+                            <img src="{{ vich_uploader_asset(article, 'imageFile') }}" 
+                                 alt="{{ article.title }}" 
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-black/40"></div>
+                        {% else %}
+                            <div class="text-6xl group-hover:scale-110 transition-transform duration-300">📄</div>
+                        {% endif %}
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#0f0903] via-transparent to-transparent"></div>
+                        
+                        <!-- Tags badge -->
+                        {% if article.tags|length > 0 %}
+                            <div class="absolute top-4 left-4 flex flex-wrap gap-1">
+                                {% for tagArticle in article.tags|slice(0, 2) %}
+                                    <span class="text-xs px-2 py-0.5 rounded-full" style="background-color: {{ tagArticle.color }}30; color: {{ tagArticle.color }}; border: 1px solid {{ tagArticle.color }}40;">
+                                        #{{ tagArticle.name }}
+                                    </span>
+                                {% endfor %}
+                                {% if article.tags|length > 2 %}
+                                    <span class="text-xs px-2 py-0.5 rounded-full bg-amber-900/50 text-amber-400 border border-amber-800/40">
+                                        +{{ article.tags|length - 2 }}
+                                    </span>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Category -->
+                        <div class="absolute top-4 right-4 bg-amber-900/50 border border-amber-800/40 text-amber-400 text-xs px-3 py-1 rounded-full">
+                            {{ article.category.name }}
+                        </div>
+                    </div>
+
+                    <!-- Card Body -->
+                    <div class="p-6">
+                        <h3 class="font-display text-orange-600 font-bold text-lg mb-3 group-hover:text-amber-300 transition-colors line-clamp-2 leading-snug">
+                            <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}">
+                                {{ article.title }}
+                            </a>
+                        </h3>
+                        <p class="text-amber-700 text-sm leading-relaxed mb-4 line-clamp-2">{{ article.content|striptags|slice(0, 120) }}...</p>
+
+                        <!-- Meta info -->
+                        <div class="flex items-center justify-between text-xs text-amber-800">
+                            <div class="flex items-center gap-1.5">
+                                <span>📅</span> {{ article.publishedAt ? article.publishedAt|date('d/m/Y') : article.createdAt|date('d/m/Y') }}
+                            </div>
+                            <div class="flex items-center gap-1.5">
+                                <span>👁️</span> {{ article.viewCount ?? 0 }} vues
+                            </div>
+                        </div>
+
+                        <!-- Read more arrow -->
+                        <div class="mt-4 pt-4 border-t border-amber-900/20 flex items-center justify-between">
+                            <span class="text-amber-500 text-xs font-medium group-hover:text-amber-400 transition-colors">Lire l'article</span>
+                            <div class="w-8 h-8 rounded-lg bg-amber-900/30 group-hover:bg-amber-800/40 flex items-center justify-center transition-all group-hover:translate-x-1">
+                                <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if total_pages > 1 %}
+            <div class="mt-12 flex justify-center">
+                <nav class="flex items-center gap-2" aria-label="Pagination">
+                    {% if current_page > 1 %}
+                        <a href="{{ path('app_tag_show', {slug: tag.slug, page: current_page - 1}) }}" 
+                           class="px-3 py-2 rounded-lg border border-amber-800/30 text-amber-400 hover:bg-amber-900/30 transition">
+                            Précédent
+                        </a>
+                    {% endif %}
+                    
+                    {% for i in 1..total_pages %}
+                        {% if i == current_page %}
+                            <span class="px-4 py-2 rounded-lg bg-amber-500 text-white font-semibold">{{ i }}</span>
+                        {% elseif i >= current_page - 2 and i <= current_page + 2 %}
+                            <a href="{{ path('app_tag_show', {slug: tag.slug, page: i}) }}" 
+                               class="px-4 py-2 rounded-lg border border-amber-800/30 text-amber-400 hover:bg-amber-900/30 transition">
+                                {{ i }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if current_page < total_pages %}
+                        <a href="{{ path('app_tag_show', {slug: tag.slug, page: current_page + 1}) }}" 
+                           class="px-3 py-2 rounded-lg border border-amber-800/30 text-amber-400 hover:bg-amber-900/30 transition">
+                            Suivant
+                        </a>
+                    {% endif %}
+                </nav>
+            </div>
+            {% endif %}
+            
+        {% else %}
+            <div class="text-center py-16">
+                <div class="text-6xl mb-4">🔍</div>
+                <h3 class="text-2xl font-display text-amber-200 mb-2">Aucun article avec ce tag</h3>
+                <p class="text-amber-600">Revenez bientôt pour découvrir du contenu taggé avec <strong class="text-amber-400">#{{ tag.name }}</strong></p>
+                <a href="{{ path('app_home') }}" class="mt-6 inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 transition-colors">
+                    Retour à l'accueil →
+                </a>
+            </div>
+        {% endif %}
+        
+    </div>
+</section>
+
+<!-- Tags similaires -->
+{% if similar_tags|length > 0 %}
+<section class="py-16 border-t border-amber-900/20">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h3 class="font-display text-2xl text-amber-200 font-bold mb-8">Tags similaires</h3>
+        <div class="flex flex-wrap gap-3">
+            {% for similar in similar_tags %}
+                <a href="{{ path('app_tag_client_show', {'slug': similar.slug}) }}" 
+                   class="inline-flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-lg"
+                   style="background-color: {{ similar.color }}20; color: {{ similar.color }}; border: 1px solid {{ similar.color }}40;">
+                    <span class="w-1.5 h-1.5 rounded-full" style="background-color: {{ similar.color }}"></span>
+                    #{{ similar.name }}
+                    <span class="text-xs opacity-60">({{ similar.usageCount }})</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+{# {% endblock %} #}
+
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
+{% endblock %}

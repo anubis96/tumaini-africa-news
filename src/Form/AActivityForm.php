@@ -42,7 +42,7 @@ class AActivityForm extends AbstractType
             ])
             ->add('categories', EntityType::class, [
                 'class' => ACategory::class,
-                'choice_label' => 'id',
+                'choice_label' => 'name',
             ])
         ;
     }

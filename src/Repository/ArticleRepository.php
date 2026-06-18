@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Entity\Tag;
 use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -180,6 +181,135 @@ public function findTrendingArticles(int $limit = 10): array
         ->getQuery()
         ->getResult();
 }
+
+
+    /**
+     * Récupère tous les articles associés à un tag spécifique
+     * 
+     * @param Tag $tag Le tag pour lequel récupérer les articles
+     * @param int|null $limit Nombre maximum d'articles à récupérer
+     * @return Article[]
+     */
+    public function findByTag(Tag $tag, ?int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->leftJoin('a.tags', 't')
+            ->where('t.id = :tagId')
+            ->andWhere('a.isPublished = true')
+            ->andWhere('a.publishedAt IS NOT NULL')
+            ->setParameter('tagId', $tag->getId())
+            ->orderBy('a.publishedAt', 'DESC');
+        
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
+        
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Récupère les articles pour plusieurs tags (articles contenant au moins un des tags)
+     * 
+     * @param array $tags Liste des tags
+     * @param int|null $limit Nombre maximum d'articles
+     * @return Article[]
+     */
+    public function findByTags(array $tags, ?int $limit = null): array
+    {
+        if (empty($tags)) {
+            return [];
+        }
+        
+        $tagIds = array_map(function($tag) {
+            return $tag->getId();
+        }, $tags);
+        
+        $qb = $this->createQueryBuilder('a')
+            ->leftJoin('a.tags', 't')
+            ->where('t.id IN (:tagIds)')
+            ->andWhere('a.isPublished = true')
+            ->andWhere('a.publishedAt IS NOT NULL')
+            ->setParameter('tagIds', $tagIds)
+            ->orderBy('a.publishedAt', 'DESC')
+            ->groupBy('a.id');
+        
+        if ($limit) {
+            $qb->setMaxResults($limit);
+        }
+        
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Récupère les articles pour plusieurs tags avec pagination
+     * 
+     * @param Tag $tag Le tag principal
+     * @param int $page Numéro de la page
+     * @param int $limit Nombre d'articles par page
+     * @return \Knp\Component\Pager\Pagination\PaginationInterface
+     */
+    public function findByTagPaginated(Tag $tag, int $page = 1, int $limit = 9)
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->leftJoin('a.tags', 't')
+            ->where('t.id = :tagId')
+            ->andWhere('a.isPublished = true')
+            ->andWhere('a.publishedAt IS NOT NULL')
+            ->setParameter('tagId', $tag->getId())
+            ->orderBy('a.publishedAt', 'DESC');
+        
+        $query = $qb->getQuery();
+        
+        return $this->getPaginator()->paginate(
+            $query,
+            $page,
+            $limit
+        );
+    }
+
+    /**
+     * Récupère les articles associés à un tag pour une page donnée
+     * 
+     * @param Tag $tag
+     * @param int $page
+     * @param int $limit
+     * @return array
+     */
+    public function findArticlesByTag(Tag $tag, int $page = 1, int $limit = 9): array
+    {
+        $offset = ($page - 1) * $limit;
+        
+        $qb = $this->createQueryBuilder('a')
+            ->leftJoin('a.tags', 't')
+            ->where('t.id = :tagId')
+            ->andWhere('a.isPublished = true')
+            ->andWhere('a.publishedAt IS NOT NULL')
+            ->setParameter('tagId', $tag->getId())
+            ->orderBy('a.publishedAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit);
+        
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Compte le nombre d'articles associés à un tag
+     * 
+     * @param Tag $tag
+     * @return int
+     */
+    public function countArticlesByTag(Tag $tag): int
+    {
+        $qb = $this->createQueryBuilder('a')
+            ->select('COUNT(a.id)')
+            ->leftJoin('a.tags', 't')
+            ->where('t.id = :tagId')
+            ->andWhere('a.isPublished = true')
+            ->andWhere('a.publishedAt IS NOT NULL')
+            ->setParameter('tagId', $tag->getId());
+        
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
 
 
 

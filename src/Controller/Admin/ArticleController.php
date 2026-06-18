@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
+use App\Entity\Tag;
 use App\Form\ArticleForm;
 use App\Repository\ArticleRepository;
 use DateTimeImmutable;
@@ -34,7 +35,30 @@ final class ArticleController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // ⚠️ Récupérer les tags sélectionnés
+            $selectedTags = $form->get('tags')->getData();
+            
+            // ⚠️ Forcer la persistance des tags en les récupérant depuis le repository
+            $tagIds = [];
+            if ($selectedTags) {
+                foreach ($selectedTags as $tag) {
+                    $tagIds[] = $tag->getId();
+                }
+            }
+            
+            // Récupérer les tags depuis la base (pour éviter les problèmes de détachement)
+            $tagsToAdd = [];
+            if (!empty($tagIds)) {
+                $tagsToAdd = $entityManager->getRepository(Tag::class)->findBy(['id' => $tagIds]);
+            }
+            
+            // Ajouter les tags à l'article
+            foreach ($tagsToAdd as $tag) {
+                $article->addTag($tag);
+                $tag->setUsageCount($tag->getUsageCount() + 1);
+            }
 
+            // ... reste du code
             $slug = $this->generateSlug($article->getTitle());
             $existingArticle = $entityManager->getRepository(Article::class)->findOneBy(['slug' => $slug]);
             if($existingArticle){
@@ -43,15 +67,18 @@ final class ArticleController extends AbstractController
             }
 
             $article->setCreatedAt(new DateTimeImmutable());
-
             if ($article->getIsPublished()) {
                 $article->setPublishedAt(new DateTimeImmutable());
             }
-
-            $article->setSlug($this->generateSlug($article->getTitle()));
+            $article->setSlug($slug);
             $article->setAuthor($this->getUser());
+            
             $entityManager->persist($article);
             $entityManager->flush();
+
+            // Debug - Vérifier que les tags sont bien associés
+            $savedArticle = $entityManager->getRepository(Article::class)->find($article->getId());
+            dump('Tags après sauvegarde: ' . $savedArticle->getTags()->count());
 
             $this->addFlash('success', 'Article créé avec succès !');
             return $this->redirectToRoute('app_article_index', [], Response::HTTP_SEE_OTHER);
@@ -74,20 +101,42 @@ final class ArticleController extends AbstractController
     #[Route('/{id}/edit', name: 'app_article_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Article $article, EntityManagerInterface $entityManager): Response
     {
+        $oldTags = $article->getTags()->toArray();
         $form = $this->createForm(ArticleForm::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $article->setUpdatedAt(new DateTimeImmutable());
+ 
+            $newTags = $form->get('tags')->getData();
+            $newTagsArray = $newTags->toArray();
+
+            $tagsToRemove = array_filter($oldTags, function($oldTag) use ($newTagsArray) {
+                return !in_array($oldTag, $newTagsArray);
+            });
             
-        // Gestion de la publication
-        if ($article->getIsPublished() && !$article->getPublishedAt()) {
-            $article->setPublishedAt(new DateTimeImmutable());
-        } elseif (!$article->getIsPublished()) {
-            $article->setPublishedAt(null);
-        }
+            $tagsToAdd = array_filter($newTagsArray, function($newTag) use ($oldTags) {
+                return !in_array($newTag, $oldTags);
+            });
+            
+            foreach ($tagsToRemove as $tagToRemove) {
+                $article->removeTag($tagToRemove);
+                $tagToRemove->setUsageCount(max(0, $tagToRemove->getUsageCount() - 1));
+            }
+            
+            foreach ($tagsToAdd as $tagToAdd) {
+                $article->addTag($tagToAdd);
+                $tagToAdd->setUsageCount($tagToAdd->getUsageCount() + 1);
+            }
+            // Gestion de la publication
+            
+            if ($article->getIsPublished() && !$article->getPublishedAt()) {
+                $article->setPublishedAt(new DateTimeImmutable());
+            } elseif (!$article->getIsPublished()) {
+                $article->setPublishedAt(null);
+            }
             $article->setSlug($this->generateSlug($article->getTitle()));
             $article->setAuthor($this->getUser());
+            $article->setUpdatedAt(new DateTimeImmutable());
             $entityManager->flush();
 
             $this->addFlash('success', 'Article modifié avec succès !');

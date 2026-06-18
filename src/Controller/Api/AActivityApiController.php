@@ -24,7 +24,7 @@ class AActivityApiController extends AbstractController
     {
         $activities = $this->em->getRepository(AActivity::class)->findBy(
             [],
-            ['date' => 'DESC']
+            ['id' => 'DESC']
         );
 
         $data = [];

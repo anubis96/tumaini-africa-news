@@ -1,0 +1,176 @@
+{# templates/admin/tag/index.html.twig #}
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}Gestion des tags{% endblock %}
+
+{% block in_body %}
+<div class="w-full max-w-full bg-gray-50 dark:bg-gray-900 p-4 overflow-x-hidden">
+    
+    {# En-tête #}
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div>
+            <h1 class="text-2xl font-bold bg-orange-600 bg-clip-text text-transparent flex items-center gap-2">
+                <svg class="w-7 h-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l5 5a2 2 0 01.586 1.414V19a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                </svg>
+                Gestion des Mots clés
+            </h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {{ tags|length }} Mots clé(s) au total
+            </p>
+        </div>
+        <a href="{{ path('app_tag_new') }}" 
+           class="bg-orange-500 text-white px-5 py-2.5 rounded-lg hover:shadow-lg transition shadow-md flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+            </svg>
+            Nouveau Mot clé
+        </a>
+    </div>
+
+    {# Barre de recherche #}
+    <div class="mb-6">
+        <div class="relative max-w-md">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <input type="text" id="searchInput" 
+                   class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
+                   placeholder="Rechercher un Mot clé...">
+        </div>
+    </div>
+
+    {# Grille des tags #}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {% for tag in tags %}
+            <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden tag-card"
+                 data-name="{{ tag.name|lower }}"
+                 data-category="{{ tag.category|lower }}">
+                
+                {# En-tête coloré #}
+                <div class="h-3" style="background-color: {{ tag.color ?? '#d4af37' }}"></div>
+                
+                <div class="p-5">
+                    <div class="flex items-start justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg" style="background-color: {{ tag.color ?? '#d4af37' }}20; color: {{ tag.color ?? '#d4af37' }}">
+                                🏷️
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-800 dark:text-white">{{ tag.name }}</h3>
+                                <span class="text-xs text-gray-500">{{ tag.getCategoryLabel() }}</span>
+                            </div>
+                        </div>
+                        {% if not tag.isActive %}
+                            <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-red-100 text-red-700">Inactif</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mt-3 flex items-center gap-4 text-sm">
+                        <span class="text-gray-500">
+                            <span class="font-semibold text-gray-700 dark:text-gray-300">{{ tag.usageCount }}</span> article(s)
+                        </span>
+                        <span class="text-gray-300">|</span>
+                        <span class="text-gray-500">
+                            <span class="inline-block w-3 h-3 rounded-full" style="background-color: {{ tag.color ?? '#d4af37' }}"></span>
+                        </span>
+                    </div>
+                    
+                    <div class="mt-4 flex items-center justify-end gap-2 pt-3 border-t border-gray-100 dark:border-gray-700">
+                        <a href="{{ path('app_tag_show', {'id': tag.id}) }}" 
+                           class="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Voir">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </a>
+                        <a href="{{ path('app_tag_edit', {'id': tag.id}) }}" 
+                           class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition" title="Modifier">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                            </svg>
+                        </a>
+                        <button type="button" 
+                                onclick="confirmDelete({{ tag.id }}, '{{ tag.name|e('js') }}')"
+                                class="p-1.5 text-red-600 hover:bg-red-50 rounded-lg transition" title="Supprimer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-span-full text-center py-12">
+                <svg class="w-24 h-24 mx-auto text-gray-300 dark:text-gray-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l5 5a2 2 0 01.586 1.414V19a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+                </svg>
+                <p class="text-gray-500 dark:text-gray-400 text-lg">Aucun Mots clés pour le moment</p>
+                <a href="{{ path('app_tag_new') }}" class="mt-4 inline-flex items-center text-amber-600 hover:underline">
+                    Créer le premier Mot clé →
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+
+{# Modal de confirmation de suppression #}
+<div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-xl max-w-md w-full mx-4 p-6">
+        <div class="text-center">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-white mb-2">Confirmer la suppression</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6" id="deleteMessage"></p>
+            <form id="deleteForm" method="post" style="display: inline;">
+                <input type="hidden" name="_token" value="">
+                <div class="flex gap-3 justify-center">
+                    <button type="button" onclick="closeDeleteModal()" class="px-5 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition">Annuler</button>
+                    <button type="submit" class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Supprimer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Recherche
+    const searchInput = document.getElementById('searchInput');
+    const cards = document.querySelectorAll('.tag-card');
+
+    function filterCards() {
+        const searchTerm = searchInput ? searchInput.value.toLowerCase() : '';
+        cards.forEach(card => {
+            const name = card.getAttribute('data-name') || '';
+            const category = card.getAttribute('data-category') || '';
+            const matches = name.includes(searchTerm) || category.includes(searchTerm);
+            card.style.display = matches ? '' : 'none';
+        });
+    }
+
+    if (searchInput) searchInput.addEventListener('keyup', filterCards);
+
+    // Suppression
+    let deleteUrl = '';
+    function confirmDelete(id, name) {
+        deleteUrl = "{{ path('app_tag_delete', {'id': 0}) }}".replace('0', id);
+        document.getElementById('deleteMessage').innerHTML = `Êtes-vous sûr de vouloir supprimer le tag <strong>"${name}"</strong> ? Cette action est irréversible.`;
+        document.getElementById('deleteForm').action = deleteUrl;
+        document.getElementById('deleteForm').querySelector('input[name="_token"]').value = "{{ csrf_token('delete' ~ 0) }}".replace('0', id);
+        document.getElementById('deleteModal').classList.remove('hidden');
+        document.getElementById('deleteModal').classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.add('hidden');
+        document.getElementById('deleteModal').classList.remove('flex');
+    }
+
+    document.getElementById('deleteModal')?.addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+</script>
+{% endblock %}

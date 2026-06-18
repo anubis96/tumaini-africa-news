@@ -5,6 +5,7 @@ namespace App\Form;
 
 use App\Entity\Article;
 use App\Entity\Category;
+use App\Entity\Tag;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -79,6 +80,21 @@ class ArticleForm extends AbstractType
             ->add('category', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'name',
+                'attr' => ['class' => 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500']
+            ])
+            ->add('tags', EntityType::class, [
+                'class' => Tag::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'required' => false,
+                'by_reference' => false,
+                'expanded' => false,
+                'attr' => [
+                    'class' => 'w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500',
+                    'multiple' => 'multiple',
+                    'data-placeholder' => 'Sélectionnez des tags',
+                ],
+                'help' => 'Sélectionnez ou recherchez des tags pour cet article. Maintenez Ctrl (Cmd sur Mac) pour en sélectionner plusieurs.'
             ])
             ->add('isPublished', CheckboxType::class,[
                 'required' => false

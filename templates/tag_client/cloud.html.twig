@@ -1,0 +1,70 @@
+{# templates/tag/cloud.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Tags populaires — TUMAINI AFRICA NEWS{% endblock %}
+
+{% block body %}
+
+<!-- Page Header -->
+<section class="relative pt-32 pb-20 overflow-hidden" style="background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(212,175,55,0.12) 0%, transparent 70%), #0a0704;">
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: linear-gradient(rgba(212,175,55,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(212,175,55,0.5) 1px,transparent 1px); background-size: 60px 60px;"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="max-w-3xl">
+            <div class="flex items-center gap-2 mb-4">
+                <a href="{{ path('app_home') }}" class="text-amber-700 hover:text-amber-500 text-sm transition-colors">Accueil</a>
+                <span class="text-amber-800">/</span>
+                <span class="text-amber-400 text-sm">Tags</span>
+            </div>
+            <h1 class="font-display text-5xl sm:text-6xl text-amber-100 font-bold mb-4">
+                🏷️ Tous les tags
+            </h1>
+            <p class="text-amber-600 text-lg leading-relaxed">
+                Explorez nos articles par mot-clé. Cliquez sur un tag pour découvrir tous les articles associés.
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Tag Cloud -->
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- Filtres par catégorie -->
+        <div class="flex flex-wrap gap-2 mb-10">
+            <a href="{{ path('app_tags_cloud') }}" 
+               class="px-4 py-2 rounded-full text-sm font-medium transition-all 
+                      {% if not selected_category %}bg-amber-600 text-white shadow-md{% else %}bg-amber-900/30 text-amber-400 hover:bg-amber-800/50{% endif %}">
+                Tous
+            </a>
+            {% for cat in categories %}
+                <a href="{{ path('app_tags_cloud', {'category': cat}) }}" 
+                   class="px-4 py-2 rounded-full text-sm font-medium transition-all 
+                          {% if selected_category == cat %}bg-amber-600 text-white shadow-md{% else %}bg-amber-900/30 text-amber-400 hover:bg-amber-800/50{% endif %}">
+                    {{ cat }}
+                </a>
+            {% endfor %}
+        </div>
+        
+        <!-- Nuage de tags -->
+        <div class="flex flex-wrap gap-3 justify-center">
+            {% for tag in tags %}
+                <a href="{{ path('app_tag_client_show', {'slug': tag.slug}) }}" 
+                   class="group px-4 py-2 rounded-full border border-amber-800/30 hover:border-amber-500 transition-all hover:scale-110 hover:shadow-lg"
+                   style="font-size: {{ 14 + (tag.usageCount * 1.2) }}px;">
+                    <span class="text-amber-200 group-hover:text-amber-400 transition-colors" style="color: {{ tag.color }}">
+                        #{{ tag.name }}
+                    </span>
+                    <span class="text-amber-600 text-xs ml-1">({{ tag.usageCount }})</span>
+                </a>
+            {% endfor %}
+        </div>
+        
+        {% if tags|length == 0 %}
+            <div class="text-center py-16">
+                <p class="text-amber-500">Aucun tag disponible pour le moment.</p>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+{% endblock %}

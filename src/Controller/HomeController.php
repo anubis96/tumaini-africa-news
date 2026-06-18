@@ -7,14 +7,11 @@ use App\Entity\User;
 use App\Repository\AdvertiseRepository;
 use App\Repository\ArticleRepository;
 use App\Repository\CategoryRepository;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Repository\TagRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 final class HomeController extends AbstractController
 {
@@ -22,7 +19,9 @@ final class HomeController extends AbstractController
     public function index(ArticleRepository $articleRepo, 
         CategoryRepository $categoryRepository,
         AdvertiseRepository $advertiseRepository,
-        Request $request): Response
+        TagRepository $tagRepository,
+        Request $request
+        ): Response
     {
         $locale = $request->getLocale();
         $GLOBALS['locale'] = $locale;
@@ -52,6 +51,36 @@ final class HomeController extends AbstractController
         $last_advertise = $advertiseRepository->findLastThreeWhereIsMiddleFalseOrNull();
         $last_advertise_middle = $advertiseRepository->findLastMiddleAdvertise();
         $nonUrgentLastThree = $articleRepo->findThreeLatestNonUrgentArticles();
+
+        // --- 🔥 TAGS POPULAIRES ---
+        // Tags populaires des 3 derniers jours
+        $popularTags3Days = $tagRepository->findPopularTagsLast3Days(12);
+        
+        // Tags populaires de la semaine
+        $popularTagsWeek = $tagRepository->findPopularTagsLastWeek(12);
+        
+        // Tags populaires du mois
+        $popularTagsMonth = $tagRepository->findPopularTagsLastMonth(12);
+        
+        // Tags les plus utilisés (tous temps)
+        $mostUsedTags = $tagRepository->findMostUsedTags(12);
+
+        // Statistiques des tags
+        $tagsStats = $tagRepository->getTagsStats();
+
+        // Par défaut, afficher les tags de la semaine
+        $popularTags = $popularTagsWeek;
+
+        // Récupérer la période choisie (optionnelle)
+        $period = $request->query->get('period', 'week');
+        $popularTags = match($period) {
+            '3days' => $popularTags3Days,
+            'week' => $popularTagsWeek,
+            'month' => $popularTagsMonth,
+            'all' => $mostUsedTags,
+            default => $popularTagsWeek,
+        };
+
         return $this->render('home/index.html.twig', [
             'controller_name' => 'Acceuil !',
             'lastFirst' => $nonUrgentLastThree[0] ?? null,
@@ -68,6 +97,14 @@ final class HomeController extends AbstractController
             'advertises_count'=> count($last_advertise),
             'middle_advertise' => $last_advertise_middle,
             'current_locale' => $locale,
+        
+            'popular_tags' => $popularTags,
+            'popular_tags_3days' => $popularTags3Days,
+            'popular_tags_week' => $popularTagsWeek,
+            'popular_tags_month' => $popularTagsMonth,
+            'most_used_tags' => $mostUsedTags,
+            'tags_stats' => $tagsStats,
+            'selected_period' => $period,
         ]);
     }
 

@@ -87,6 +87,10 @@ class AOffre
     #[Groups(['api'])]
     private ?string $icon = null;
 
+    #[ORM\Column(length: 255)]
+    #[Groups('api')]
+    private ?string $slug = null;
+
     // ========== MÉTHODES STATIQUES POUR LES CHOIX ==========
     
     /**
@@ -323,6 +327,18 @@ class AOffre
     public function setIcon(?string $icon): static
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

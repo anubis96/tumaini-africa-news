@@ -72,6 +72,10 @@ class AActivity
     #[ORM\ManyToOne(inversedBy: 'aActivities')]
     private ?ACategory $categories = null;
 
+    #[ORM\Column(length: 255)]
+    #[Groups('api')]
+    private ?string $slug = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -229,6 +233,18 @@ class AActivity
     public function setCategories(?ACategory $categories): static
     {
         $this->categories = $categories;
+
+        return $this;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+
+    public function setSlug(string $slug): static
+    {
+        $this->slug = $slug;
 
         return $this;
     }

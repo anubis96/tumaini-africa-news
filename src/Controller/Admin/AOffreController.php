@@ -47,6 +47,7 @@ final class AOffreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $aOffre->setSlug($this->generateSlug($aOffre->getTitre()));
             $entityManager->persist($aOffre);
             $entityManager->flush();
 
@@ -74,6 +75,7 @@ final class AOffreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $aOffre->setSlug($this->generateSlug($aOffre->getTitre()));
             $entityManager->flush();
 
             return $this->redirectToRoute('app_a_offre_index', [], Response::HTTP_SEE_OTHER);
@@ -94,5 +96,25 @@ final class AOffreController extends AbstractController
         }
 
         return $this->redirectToRoute('app_a_offre_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    function generateSlug(string $string): string
+    {
+        // Convertir en minuscules
+        $string = strtolower($string);
+
+        // Remplacer les caractères accentués par leur version non accentuée
+        $string = iconv('UTF-8', 'ASCII//TRANSLIT', $string);
+
+        // Supprimer les caractères spéciaux
+        $string = preg_replace('/[^a-z0-9-]/', '-', $string);
+
+        // Supprimer les tirets en trop
+        $string = preg_replace('/-+/', '-', $string);
+
+        // Enlever les tirets en début et fin de chaîne
+        $string = trim($string, '-');
+
+        return $string;
     }
 }

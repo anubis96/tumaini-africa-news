@@ -15,8 +15,7 @@ class AActivityApiController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $em,
-        private SerializerInterface $serializer,
-        private UrlGeneratorInterface $urlGenerator 
+        private SerializerInterface $serializer
     ) {}
 
     #[Route(path:'', name:'list', methods: ['GET'])]
@@ -32,6 +31,7 @@ class AActivityApiController extends AbstractController
             $item = [
                 'id' => $activity->getId(),
                 'title' => $activity->getTitle(),
+                'slug' => $activity->getSlug(),
                 'description' => $activity->getDescription(),
                 'resume' => $activity->getResume(),
                 'date' => $activity->getDate()?->format('Y-m-d'),
@@ -62,6 +62,22 @@ class AActivityApiController extends AbstractController
             return new JsonResponse([
                 'error' => 'Activité non trouvée',
                 'message' => "L'activité avec l'ID $id n'existe pas"
+            ], Response::HTTP_NOT_FOUND);
+        }
+        
+        $data = $this->serializer->serialize($activity, 'json', ['groups' => 'api']);
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
+    }
+
+    #[Route('/slug/{slug}', name: 'show_slug', methods: ['GET'])]
+    public function show_slug(string $slug): JsonResponse
+    {
+        $activity = $this->em->getRepository(AActivity::class)->findOneBy(['slug' => $slug]);
+        
+        if (!$activity) {
+            return new JsonResponse([
+                'error' => 'Activité non trouvée',
+                'message' => "L'activité avec le slug $slug n'existe pas"
             ], Response::HTTP_NOT_FOUND);
         }
         

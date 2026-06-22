@@ -47,6 +47,22 @@ class AOffreApiController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
+    #[Route('/slug/{slug}', name: 'show_slug', methods: ['GET'])]
+    public function show_slug(string $slug): JsonResponse
+    {
+        $offer = $this->em->getRepository(AOffre::class)->findOneBy(['slug' => $slug]);
+        
+        if (!$offer) {
+            return new JsonResponse([
+                'error' => 'Offre non trouvée',
+                'message' => "L'offre avec le slug $slug n'existe pas"
+            ], Response::HTTP_NOT_FOUND);
+        }
+        
+        $data = $this->serializer->serialize($offer, 'json', ['groups' => 'api']);
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
+    }
+
     #[Route('/statut/{statut}', name: 'by_statut', methods: ['GET'])]
     public function getByStatut(string $statut): JsonResponse
     {

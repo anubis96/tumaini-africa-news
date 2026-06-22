@@ -6,11 +6,10 @@ use App\Entity\AActivity;
 use App\Entity\ACategory;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Validator\Constraints\All;
 use Symfony\Component\Validator\Constraints\Image;
 
 class AActivityForm extends AbstractType
@@ -25,7 +24,11 @@ class AActivityForm extends AbstractType
                 'widget' => 'single_text',
             ])
             ->add('lieu')
-            ->add('status')
+            ->add('status', ChoiceType::class, [
+                'label' => 'Statut',
+                'choices' => AActivity::getStatutsList(),
+                'placeholder' => 'Sélectionnez un statut',
+            ])
             ->add('imageIcon')
             ->add('participants')
             ->add('beneficiaires')

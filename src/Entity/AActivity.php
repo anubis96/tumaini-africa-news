@@ -15,6 +15,12 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
 #[Vich\Uploadable()]
 class AActivity
 {
+
+        // ========== CONSTANTES POUR LES STATUTS ==========
+        public const STATUT_EN_COURS = 'en_cours';
+        public const STATUT_PLANIFIE = 'planifie';
+        public const STATUT_TERMINE = 'termine';
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -247,5 +253,17 @@ class AActivity
         $this->slug = $slug;
 
         return $this;
+    }
+
+        /**
+     * Retourne tous les statuts disponibles
+     */
+    public static function getStatutsList(): array
+    {
+        return [
+            self::STATUT_PLANIFIE => 'Planifié',
+            self::STATUT_EN_COURS => 'En cours',
+            self::STATUT_TERMINE => 'Terminé',
+        ];
     }
 }

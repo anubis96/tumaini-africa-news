@@ -48,14 +48,16 @@
         <!-- Nuage de tags -->
         <div class="flex flex-wrap gap-3 justify-center">
             {% for tag in tags %}
-                <a href="{{ path('app_tag_client_show', {'slug': tag.slug}) }}" 
-                   class="group px-4 py-2 rounded-full border border-amber-800/30 hover:border-amber-500 transition-all hover:scale-110 hover:shadow-lg"
-                   style="font-size: {{ 14 + (tag.usageCount * 1.2) }}px;">
-                    <span class="text-amber-200 group-hover:text-amber-400 transition-colors" style="color: {{ tag.color }}">
-                        #{{ tag.name }}
-                    </span>
-                    <span class="text-amber-600 text-xs ml-1">({{ tag.usageCount }})</span>
-                </a>
+                {% if tag.usageCount > 0 %}
+                    <a href="{{ path('app_tag_client_show', {'slug': tag.slug}) }}" 
+                    class="group px-4 py-2 rounded-full border border-amber-800/30 hover:border-amber-500 transition-all hover:scale-110 hover:shadow-lg"
+                    style="font-size: {{ 14 + (tag.usageCount * 1.2) }}px;">
+                        <span class="text-amber-200 group-hover:text-amber-400 transition-colors" style="color: {{ tag.color }}">
+                            #{{ tag.name }}
+                        </span>
+                        <span class="text-amber-600 text-xs ml-1">({{ tag.usageCount }})</span>
+                    </a>
+                {% endif %}
             {% endfor %}
         </div>
         

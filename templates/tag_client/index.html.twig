@@ -131,7 +131,7 @@
             <div class="mt-12 flex justify-center">
                 <nav class="flex items-center gap-2" aria-label="Pagination">
                     {% if current_page > 1 %}
-                        <a href="{{ path('app_tag_show', {slug: tag.slug, page: current_page - 1}) }}" 
+                        <a href="{{ path('app_tag_client_show', {slug: tag.slug, page: current_page - 1}) }}" 
                            class="px-3 py-2 rounded-lg border border-amber-800/30 text-amber-400 hover:bg-amber-900/30 transition">
                             Précédent
                         </a>
@@ -149,7 +149,7 @@
                     {% endfor %}
                     
                     {% if current_page < total_pages %}
-                        <a href="{{ path('app_tag_show', {slug: tag.slug, page: current_page + 1}) }}" 
+                        <a href="{{ path('app_tag_client_show', {slug: tag.slug, page: current_page + 1}) }}" 
                            class="px-3 py-2 rounded-lg border border-amber-800/30 text-amber-400 hover:bg-amber-900/30 transition">
                             Suivant
                         </a>

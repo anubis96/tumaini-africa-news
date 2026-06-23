@@ -141,7 +141,7 @@
                         {% if i == current_page %}
                             <span class="px-4 py-2 rounded-lg bg-amber-500 text-white font-semibold">{{ i }}</span>
                         {% elseif i >= current_page - 2 and i <= current_page + 2 %}
-                            <a href="{{ path('app_tag_show', {slug: tag.slug, page: i}) }}" 
+                            <a href="{{ path('app_tag_client_show', {slug: tag.slug, page: i}) }}" 
                                class="px-4 py-2 rounded-lg border border-amber-800/30 text-amber-400 hover:bg-amber-900/30 transition">
                                 {{ i }}
                             </a>

@@ -48,12 +48,18 @@ class ArticleRepository extends ServiceEntityRepository
      * 
      * @return Article[]
      */
-    public function findThreeLatestUrgent(): array
+    public function findThreeLatestUrgent(array $excludedCategorySlugs = []): array
     {
-        return $this->createQueryBuilder('a')
+        $qb = $this->createQueryBuilder('a')
             ->where('a.isUrgent = :isUrgent')
-            ->setParameter('isUrgent', true)
-            ->orderBy('a.publishedAt', 'DESC')
+            ->setParameter('isUrgent', true);
+            if (!empty($excludedCategorySlugs)) {
+                $qb ->leftJoin('a.category', 'c')
+                    ->andWhere('c.slug NOT IN (:excludedSlugs)')
+                    ->setParameter('excludedSlugs', $excludedCategorySlugs);
+            }
+
+            return $qb->orderBy('a.publishedAt', 'DESC')
             ->setMaxResults(3)
             ->getQuery()
             ->getResult();
@@ -106,13 +112,19 @@ class ArticleRepository extends ServiceEntityRepository
         : $otherArticles;
     }
 
-    public function findThreeLatestNonUrgentArticles(): array
+    public function findThreeLatestNonUrgentArticles($excludedCategorySlugs = []): array
     {
-        return $this->createQueryBuilder('a')
+        $qb = $this->createQueryBuilder('a')
             ->where('a.isPublished = true')
             ->andWhere('a.isUrgent = false OR a.isUrgent IS NULL')
-            ->orderBy('a.publishedAt', 'DESC')
-            ->setMaxResults(3)
+            ->orderBy('a.publishedAt', 'DESC');
+            if (!empty($excludedCategorySlugs)) {
+                $qb ->leftJoin('a.category', 'c')
+                    ->andWhere('c.slug NOT IN (:excludedSlugs)')
+                    ->setParameter('excludedSlugs', $excludedCategorySlugs);
+            }
+
+            return $qb->setMaxResults(3)
             ->getQuery()
             ->getResult()
             ;
@@ -150,12 +162,16 @@ public function getPaginatedArticles(string $slug, PaginatorInterface $paginator
 
 
 
-public function findMostViewedArticles(int $limit = 5): array
+public function findMostViewedArticles(int $limit = 5, $excludedCategorySlugs = []): array
 {
     $qb = $this->createQueryBuilder('a')
         ->where('a.isPublished = true')
-        ->orderBy('a.viewCount', 'DESC')
-        ->setMaxResults($limit);
+        ->orderBy('a.viewCount', 'DESC');
+        if (!empty($excludedCategorySlugs)) {
+            $qb ->leftJoin('a.category', 'c')
+                ->andWhere('c.slug NOT IN (:excludedSlugs)')
+                ->setParameter('excludedSlugs', $excludedCategorySlugs);
+        }
 
     $dateLimit = new \DateTime();
     $dateLimit->modify('-48 hours');
@@ -163,6 +179,7 @@ public function findMostViewedArticles(int $limit = 5): array
     // Clone le QueryBuilder pour garder les mêmes conditions de base
     $recentQb = clone $qb;
     $recentArticles = $recentQb
+        ->setMaxResults($limit)
         ->andWhere('a.publishedAt >= :dateLimit')
         ->setParameter('dateLimit', $dateLimit)
         ->getQuery()
@@ -170,12 +187,17 @@ public function findMostViewedArticles(int $limit = 5): array
 
     return count($recentArticles) > 0 ? $recentArticles : $qb->getQuery()->getResult();
 }
-public function findTrendingArticles(int $limit = 10): array
+public function findTrendingArticles(int $limit = 10, $excludedCategorySlugs = []): array
 {
-    return $this->createQueryBuilder('a')
+    $qb = $this->createQueryBuilder('a')
         ->where('a.isPublished = true')
-        ->andWhere('a.publishedAt IS NOT NULL')
-        ->orderBy('CASE WHEN a.publishedAt >= :date THEN a.viewCount ELSE 0 END', 'DESC')
+        ->andWhere('a.publishedAt IS NOT NULL');
+        if (!empty($excludedCategorySlugs)) {
+            $qb ->leftJoin('a.category', 'c')
+                ->andWhere('c.slug NOT IN (:excludedSlugs)')
+                ->setParameter('excludedSlugs', $excludedCategorySlugs);
+        }
+        return $qb->orderBy('CASE WHEN a.publishedAt >= :date THEN a.viewCount ELSE 0 END', 'DESC')
         ->addOrderBy('a.publishedAt', 'DESC')
         ->setParameter('date', new DateTime('-1 week'))
         ->setMaxResults($limit)

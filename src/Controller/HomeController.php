@@ -26,7 +26,9 @@ final class HomeController extends AbstractController
         $locale = $request->getLocale();
         $GLOBALS['locale'] = $locale;
 
-        $last_urgent_articles = $articleRepo->findThreeLatestUrgent();
+        $excludedSlugs = ['sport-international', 'divertissement', 'etranger'];
+
+        $last_urgent_articles = $articleRepo->findThreeLatestUrgent($excludedSlugs);
         $categoriesResult = $categoryRepository->findTopCategoriesWithMostArticles(7);
         $categories = array_map(function($item){
             return $item[0];
@@ -45,12 +47,12 @@ final class HomeController extends AbstractController
             );
         }
 
-        $mostViewed = $articleRepo->findMostViewedArticles();
+        $mostViewed = $articleRepo->findMostViewedArticles(5, $excludedSlugs);
         $firstViewed = $mostViewed[0];
-        $trending = $articleRepo->findTrendingArticles();
+        $trending = $articleRepo->findTrendingArticles(10, $excludedSlugs);
         $last_advertise = $advertiseRepository->findLastThreeWhereIsMiddleFalseOrNull();
         $last_advertise_middle = $advertiseRepository->findLastMiddleAdvertise();
-        $nonUrgentLastThree = $articleRepo->findThreeLatestNonUrgentArticles();
+        $nonUrgentLastThree = $articleRepo->findThreeLatestNonUrgentArticles($excludedSlugs);
 
         // --- 🔥 TAGS POPULAIRES ---
         // Tags populaires des 3 derniers jours
@@ -81,10 +83,10 @@ final class HomeController extends AbstractController
             default => $popularTagsWeek,
         };
 
-        $categoryInternational = $categoryRepository->findOneBy(['slug' => 'actualite-internationale']);
-        $categoryFaitDivers = $categoryRepository->findOneBy(['slug' => 'faits-divers']);
+        $categoryInternational = $categoryRepository->findOneBy(['slug' => 'etranger']);
+        $categoryFaitDivers = $categoryRepository->findOneBy(['slug' => 'fait-divers']);
         $categoryDivertissement = $categoryRepository->findOneBy(['slug' => 'divertissement']);
-        $categorySport = $categoryRepository->findOneBy(['slug' => 'sport']);
+        $categorySport = $categoryRepository->findOneBy(['slug' => 'sport-international']);
 
         // Récupérer les articles de chaque catégorie (5 derniers)
         $internationalArticles = [];

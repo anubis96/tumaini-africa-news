@@ -1,6 +1,16 @@
 <IfModule mod_headers.c>
-  <FilesMatch "\.(ttf|ttc|otf|eot|woff|woff2|font.css|css|js)$">
-    Header set Access-Control-Allow-Origin "*"
+  # <FilesMatch "\.(ttf|ttc|otf|eot|woff|woff2|font.css|css|js)$">
+  #   Header set Access-Control-Allow-Origin "*"
+  # </FilesMatch>
+  <FilesMatch "\.(ico|pdf|flv|jpg|jpeg|png|gif|webp|svg|font.css|js|css|swf|woff|woff2|ttc|ttf|otf|eot)$">
+    Header set Cache-Control "max-age=31536000, public, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(html|htm)$">
+    Header set Cache-Control "max-age=86400, public"
+  </FilesMatch>
+      # Pour sitemap.xml et robots.txt (1 heure)
+  <FilesMatch "^(sitemap\.xml|robots\.txt)$">
+    Header set Cache-Control "max-age=3600, public"
   </FilesMatch>
 </IfModule>
 
@@ -25,11 +35,26 @@
   # redirect all requests to app's public directory
   RewriteCond %{REQUEST_URI} !public/
   RewriteRule (.*) /public/$1 [L]
+
+  # Vérifier si le navigateur supporte WebP
+  RewriteCond %{HTTP_ACCEPT} image/webp
+    
+  # Vérifier si l'image WebP existe
+  RewriteCond %{REQUEST_URI} \.(jpe?g|png|gif)$
+  RewriteCond %{DOCUMENT_ROOT}/$1.webp -f
+  RewriteRule ^(.+)\.(jpe?g|png|gif)$ $1.webp [T=image/webp,E=WEBP:1,L]
+    
+  # Ajouter l'en-tête Vary pour le cache
+  Header append Vary Accept env=WEBP
 </IfModule>
 
 <IfModule mod_php.c>
     php_value memory_limit 256M
     php_value max_execution_time 120
+</IfModule>
+
+<IfModule mod_mime.c>
+    AddType image/webp .webp
 </IfModule>
 
 <Files "sitemap.xml">
@@ -70,8 +95,8 @@
    php_flag zlib.output_compression Off
 </IfModule>
 # END cPanel-generated php ini directives, do not edit
-    Header set Cache-Control "max-age=3600, public"
-    Header unset ETag
-    FileETag None
-</Files>
+#     Header set Cache-Control "max-age=3600, public"
+#     Header unset ETag
+#     FileETag None
+# </Files>
 

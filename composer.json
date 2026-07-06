@@ -11,6 +11,7 @@
         "doctrine/dbal": "^3",
         "doctrine/doctrine-bundle": "^2.14",
         "doctrine/doctrine-migrations-bundle": "^3.4",
+        "doctrine/instantiator": "1.5",
         "doctrine/orm": "^3.3",
         "geoip2/geoip2": "~2.0",
         "james-heinrich/getid3": "^1.9",

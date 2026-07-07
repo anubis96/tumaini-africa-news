@@ -23,6 +23,11 @@ final class SingleArticlePublicController extends AbstractController
 
     {
         $article = $articleRepository->findOneBySlug($slug);
+        
+        if(!$article){
+            throw $this->createNotFoundException("L'article demandé n'existe pas");
+        }
+
         $tracker->track($article);
         
         $relatedArticles = $articleRepository->findRelatedArticles(
@@ -30,10 +35,6 @@ final class SingleArticlePublicController extends AbstractController
             $article->getCategory(),
             3
         );
-
-        if(!$article){
-            throw $this->createNotFoundException("L'article demandé n'existe pas");
-        }
 
         $comments = $commentRepository->findApprovedByArticle($article->getId());
         $comment = new Comment();
@@ -48,6 +49,7 @@ final class SingleArticlePublicController extends AbstractController
         ]);
         $response->setPublic();
         $response->setMaxAge(3600);
+        $response->headers->addCacheControlDirective('stale-while-revalidate', 60);
 
         return $response;
         

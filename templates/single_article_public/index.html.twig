@@ -6,6 +6,12 @@
 {% block meta %}
     {{ parent() }}
     
+    {# === CALCUL TYPE MIME IMAGE (fix WhatsApp/Facebook) === #}
+    {% set absoluteImageUrl = article.imageUrl ? absolute_url(vich_uploader_asset(article, 'imageFile')) : absolute_url('/images/static/default.png') %}
+    {% set imageMimeTypes = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png', 'webp': 'image/webp', 'gif': 'image/gif'} %}
+    {% set imageExt = absoluteImageUrl|split('.')|last|lower|split('?')|first %}
+    {% set imageMimeType = imageMimeTypes[imageExt]|default('image/jpeg') %}
+
     {# === META DE BASE === #}
     <meta name="description" content="{{ article.content|striptags|slice(0, 160) }}">
     <meta name="author" content="{{ article.author.firstname ~ ' ' ~ article.author.lastname }}">
@@ -76,10 +82,9 @@
     {% endfor %}
     
     {# === IMAGE === #}
-    {% set absoluteImageUrl = article.imageUrl ? absolute_url(vich_uploader_asset(article, 'imageFile')) : absolute_url('/images/static/default.png') %}
     <meta property="og:image" content="{{ absoluteImageUrl }}">
     <meta property="og:image:secure_url" content="{{ absoluteImageUrl }}">
-    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:type" content="{{ imageMimeType }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ article.title }}">
@@ -104,10 +109,9 @@
     <meta property="article:section" content="{{ article.category.name }}">
     
     {# Image - Version absolue pour WhatsApp #}
-    {% set absoluteImageUrl = article.imageUrl ? absolute_url(vich_uploader_asset(article, 'imageFile')) : absolute_url('/images/static/default.png') %}
     <meta property="og:image" content="{{ absoluteImageUrl }}">
     <meta property="og:image:secure_url" content="{{ absoluteImageUrl }}">
-    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:type" content="{{ imageMimeType }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
     <meta property="og:image:alt" content="{{ article.title }}">
@@ -169,39 +173,6 @@
         }
     </script>
 {% endblock %}
-{# {% block meta %}
-    {{ parent() }}
-    <meta name="description" content="{{ article.content|striptags|slice(0, 160) }}">
-    <meta name="author" content="{{ article.author.firstname ~ ' ' ~ article.author.lastname }}">
-    
-    Open Graph / Facebook / WhatsApp
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ app.request.uri }}">
-    <meta property="og:title" content="{{ article.title }}">
-    <meta property="og:description" content="{{ article.content|striptags|slice(0, 160) }}">
-    <meta property="og:site_name" content="TUMAINI AFRICA NEWS">
-    <meta property="article:published_time" content="{{ article.publishedAt|date('c') }}">
-    <meta property="article:author" content="{{ article.author.firstname ~ ' ' ~ article.author.lastname }}">
-    <meta property="article:section" content="{{ article.category.name }}">
-    
-    Image - Version absolue pour WhatsApp
-    {% set absoluteImageUrl = article.imageUrl ? absolute_url(vich_uploader_asset(article, 'imageFile')) : absolute_url('/images/static/default.png') %}
-    <meta property="og:image" content="{{ absoluteImageUrl }}">
-    <meta property="og:image:secure_url" content="{{ absoluteImageUrl }}">
-    <meta property="og:image:type" content="image/jpeg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="{{ article.title }}">
-    
-    Twitter Card
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ article.title }}">
-    <meta name="twitter:description" content="{{ article.content|striptags|slice(0, 160) }}">
-    <meta name="twitter:image" content="{{ absoluteImageUrl }}">
-    
-    WhatsApp spécifique
-    <meta property="og:image:url" content="{{ absoluteImageUrl }}">
-{% endblock %} #}
 
 {% block body %}
 <div class="fade-in bg-gray-50 min-h-screen">
@@ -241,7 +212,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                     </svg>
                     <time datetime="{{ article.publishedAt|date('c') }}">
-                        {{ article.publishedAt|date('d/m/Y à H:i') }}
+                        {% if article.updatedAt and article.updatedAt > article.publishedAt %}
+                        {# {{ article.publishedAt|date('d/m/Y à H:i') }} #}
                     </time>
                 </div>
                 <span>•</span>
@@ -249,7 +221,7 @@
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
-                    <span>{{ article.content|striptags|length / 1000|round(0) }} min de lecture</span>
+                    <span>{{ (article.content|striptags|length / 1000)|round(0) }} min de lecture</span>
                 </div>
                 {% if app.user %}
                     {% if article.viewCount %}

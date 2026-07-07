@@ -9,17 +9,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class ArticleViewTracker
 {
     public function __construct(
-        private EntityManagerInterface $em,
-        private RequestStack $requestStack
+        private EntityManagerInterface $em
     ){}
 
     public function track(Article $article)
     {
-        // $session = $this->requestStack->getSession();
-        // if(!$session->get('viewed_'.$article->getId(), false)){
-            $article->incrementCount();
-            $this->em->flush();
-            // $session->set('viewed_'.$article->getId(), true);
-        // }
+        $article->incrementCount();
+        $this->em->flush();
     }
 }

@@ -109,7 +109,6 @@ final class HomeController extends AbstractController
         }
 
         $response = $this->render('home/index.html.twig', [
-            'controller_name' => 'Acceuil !',
             'lastFirst' => $nonUrgentLastThree[0] ?? null,
             'lastSecond' => $nonUrgentLastThree[1] ?? null,
             'lastThird' => $nonUrgentLastThree[2] ?? null,

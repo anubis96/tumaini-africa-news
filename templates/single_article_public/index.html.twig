@@ -98,33 +98,7 @@
     
     {# === CANONICAL === #}
     <link rel="canonical" href="{{ app.request.uri }}">
-        {# Open Graph / Facebook / WhatsApp #}
-    <meta property="og:type" content="article">
-    <meta property="og:url" content="{{ app.request.uri }}">
-    <meta property="og:title" content="{{ article.title }}">
-    <meta property="og:description" content="{{ article.content|striptags|slice(0, 160) }}">
-    <meta property="og:site_name" content="TUMAINI AFRICA NEWS">
-    <meta property="article:published_time" content="{{ article.publishedAt|date('c') }}">
-    <meta property="article:author" content="{{ article.author.firstname ~ ' ' ~ article.author.lastname }}">
-    <meta property="article:section" content="{{ article.category.name }}">
-    
-    {# Image - Version absolue pour WhatsApp #}
-    <meta property="og:image" content="{{ absoluteImageUrl }}">
-    <meta property="og:image:secure_url" content="{{ absoluteImageUrl }}">
-    <meta property="og:image:type" content="{{ imageMimeType }}">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="{{ article.title }}">
-    
-    {# Twitter Card #}
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ article.title }}">
-    <meta name="twitter:description" content="{{ article.content|striptags|slice(0, 160) }}">
-    <meta name="twitter:image" content="{{ absoluteImageUrl }}">
-    
-    {# WhatsApp spécifique #}
-    <meta property="og:image:url" content="{{ absoluteImageUrl }}">
-    
+
     {# === SCHEMA.ORG === #}
     <script type="application/ld+json">
         {
@@ -234,7 +208,7 @@
                         </div>
                     {% endif %}
                 {% endif %}
-                {% if article.updatedAt > article.publishedAt %}
+                {% if article.updatedAt and article.updatedAt > article.publishedAt %}
                     <span>•</span>
                     <div class="flex items-center gap-2 text-amber-600">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -510,6 +484,18 @@ const shareConfig = {
     url: '{{ app.request.uri }}',
     absoluteUrl: '{{ absolute_url(app.request.uri) }}'
 };
+
+// ============================================
+// TRACKING DE VUE (asynchrone, hors du cache HTTP de la page)
+// ============================================
+if (navigator.sendBeacon) {
+    navigator.sendBeacon('{{ path('app_article_track_view', {'id': article.id}) }}');
+} else {
+    fetch('{{ path('app_article_track_view', {'id': article.id}) }}', {
+        method: 'POST',
+        keepalive: true
+    });
+}
 
 function shareOnWhatsAppPremium() {
     const text = encodeURIComponent(shareConfig.title);

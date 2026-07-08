@@ -17,7 +17,7 @@ final class SingleArticlePublicController extends AbstractController
     public function index(
         String $slug, 
         ArticleRepository $articleRepository,
-        ArticleViewTracker $tracker,
+        // ArticleViewTracker $tracker,
         CommentRepository $commentRepository
         ): Response
 
@@ -28,7 +28,7 @@ final class SingleArticlePublicController extends AbstractController
             throw $this->createNotFoundException("L'article demandé n'existe pas");
         }
 
-        $tracker->track($article);
+        // $tracker->track($article);
         
         $relatedArticles = $articleRepository->findRelatedArticles(
             $article->getId(),
@@ -53,5 +53,13 @@ final class SingleArticlePublicController extends AbstractController
 
         return $response;
         
+    }
+
+    #[Route('/article/{id}/view', name: 'app_article_track_view', methods: ['POST'])]
+    public function trackView(Article $article, ArticleViewTracker $tracker): JsonResponse
+    {
+        $tracker->track($article);
+
+        return new JsonResponse(['status' => 'ok']);
     }
 }

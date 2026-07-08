@@ -19,7 +19,7 @@ class LocaleExtension extends AbstractExtension
     
     public function getCurrentLocale(): string
     {
-        return $GLOBALS['locale'] ?? 'fr';
+        return $this->requestStack->getCurrentRequest()?->getLocale() ?? 'fr';
     }
     
     public function getLocaleName(string $locale): string

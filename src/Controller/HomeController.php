@@ -24,7 +24,6 @@ final class HomeController extends AbstractController
         ): Response
     {
         $locale = $request->getLocale();
-        $GLOBALS['locale'] = $locale;
 
         $excludedSlugs = ['sport-international', 'divertissement', 'etranger'];
 
@@ -56,31 +55,14 @@ final class HomeController extends AbstractController
 
         // --- 🔥 TAGS POPULAIRES ---
         // Tags populaires des 3 derniers jours
-        $popularTags3Days = $tagRepository->findPopularTagsLast3Days(12);
-        
-        // Tags populaires de la semaine
-        $popularTagsWeek = $tagRepository->findPopularTagsLastWeek(12);
-        
-        // Tags populaires du mois
-        $popularTagsMonth = $tagRepository->findPopularTagsLastMonth(12);
-        
-        // Tags les plus utilisés (tous temps)
-        $mostUsedTags = $tagRepository->findMostUsedTags(12);
-
-        // Statistiques des tags
-        $tagsStats = $tagRepository->getTagsStats();
-
-        // Par défaut, afficher les tags de la semaine
-        $popularTags = $popularTagsWeek;
-
         // Récupérer la période choisie (optionnelle)
         $period = $request->query->get('period', 'week');
-        $popularTags = match($period) {
-            '3days' => $popularTags3Days,
-            'week' => $popularTagsWeek,
-            'month' => $popularTagsMonth,
-            'all' => $mostUsedTags,
-            default => $popularTagsWeek,
+        $popularTags = match ($period) {
+            '3days' => $tagRepository->findPopularTagsLast3Days(12),
+            'week' => $tagRepository->findPopularTagsLastWeek(12),
+            'month' => $tagRepository->findPopularTagsLastMonth(12),
+            'all' => $tagRepository->findMostUsedTags(12),
+            default => $tagRepository->findPopularTagsLastWeek(12),
         };
 
         $categoryInternational = $categoryRepository->findOneBy(['slug' => 'etranger']);
@@ -126,7 +108,7 @@ final class HomeController extends AbstractController
             );
         }
 
-        return $this->render('home/index.html.twig', [
+        $response = $this->render('home/index.html.twig', [
             'controller_name' => 'Acceuil !',
             'lastFirst' => $nonUrgentLastThree[0] ?? null,
             'lastSecond' => $nonUrgentLastThree[1] ?? null,
@@ -144,11 +126,6 @@ final class HomeController extends AbstractController
             'current_locale' => $locale,
         
             'popular_tags' => $popularTags,
-            'popular_tags_3days' => $popularTags3Days,
-            'popular_tags_week' => $popularTagsWeek,
-            'popular_tags_month' => $popularTagsMonth,
-            'most_used_tags' => $mostUsedTags,
-            'tags_stats' => $tagsStats,
             'selected_period' => $period,
 
             'category_international' => [
@@ -172,6 +149,15 @@ final class HomeController extends AbstractController
                 'articles' => $sportArticles,
             ]
         ]);
+        if ($this->getUser()) {
+            $response->setPrivate();
+            $response->headers->addCacheControlDirective('no-cache', true);
+        } else {
+            $response->setPublic();
+            $response->setMaxAge(300);
+            $response->headers->addCacheControlDirective('stale-while-revalidate', 60);
+        }
+        return $response;
     }
 
 }

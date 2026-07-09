@@ -29,7 +29,10 @@
             <div class="flex flex-wrap items-center justify-between py-3">
                 <!-- Logo -->
                 <a href="/" class="flex items-center space-x-3 group">
-                    <img src="{{ asset('images/static/tan-logos.png') }}" class="h-10 w-auto transition-transform duration-300 group-hover:scale-105" alt="Tumaini Africa News">
+                    <picture>
+                        <source srcset="{{ asset('images/static/tan-logo-optimized.webp') }}" type="image/webp">
+                        <img src="{{ asset('images/static/tan-logo-optimized.png') }}" width="40" height="40" fetchpriority="high" class="h-10 w-auto transition-transform duration-300 group-hover:scale-105" alt="Tumaini Africa News">
+                    </picture>                    
                     <div class="hidden sm:block">
                         <span class="text-xl font-bold gradient-text">
                             {{ 'home.title'|trans }}

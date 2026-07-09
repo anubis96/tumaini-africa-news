@@ -7,7 +7,7 @@
     {{ parent() }}
     
     {# === CALCUL TYPE MIME IMAGE (fix WhatsApp/Facebook) === #}
-    {% set absoluteImageUrl = article.imageUrl ? absolute_url(vich_uploader_asset(article, 'imageFile')) : absolute_url('/images/static/default.png') %}
+    {% set absoluteImageUrl = article.imageUrl ? absolute_url(vich_uploader_asset(article, 'imageFile')) : absolute_url('/images/static/default.jpg') %}
     {% set imageMimeTypes = {'jpg': 'image/jpeg', 'jpeg': 'image/jpeg', 'png': 'image/png', 'webp': 'image/webp', 'gif': 'image/gif'} %}
     {% set imageExt = absoluteImageUrl|split('.')|last|lower|split('?')|first %}
     {% set imageMimeType = imageMimeTypes[imageExt]|default('image/jpeg') %}
@@ -292,7 +292,7 @@
                                  height="450"
                                  class="w-full h-auto max-h-96 object-contain md:object-cover transition-transform duration-700 hover:scale-105">
                         {% else %}
-                            <img src="{{ 'images/static/default.png' }}" 
+                            <img src="{{ '/images/static/default.jpg' }}" 
                                  alt="{{ article.title }}" 
                                  loading="eager"
                                  decoding="async"
@@ -414,14 +414,14 @@
                             {% for relatedArticle in relatedArticles %}
                                 <article class="bg-gray-50 rounded-xl shadow-md overflow-hidden hover:shadow-xl transition-all duration-300 group">
                                     <div class="relative h-48 overflow-hidden">
-                                        <img src="{{ vich_uploader_asset(relatedArticle, 'imageFile')|default('images/static/default.png') }}" 
+                                        <img src="{{ vich_uploader_asset(relatedArticle, 'imageFile')|default('/images/static/default.jpg') }}" 
                                             alt="{{ relatedArticle.title }}" 
                                             loading="lazy"
                                             decoding="async"
                                             width="400"
                                             height="192"
                                             class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                        <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                        <div class="absolute inset-0 bg-linear-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                         <span class="absolute top-3 left-3 bg-amber-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
                                             {{ relatedArticle.category.name }}
                                         </span>

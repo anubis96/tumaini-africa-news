@@ -485,18 +485,6 @@ const shareConfig = {
     absoluteUrl: '{{ absolute_url(app.request.uri) }}'
 };
 
-// ============================================
-// TRACKING DE VUE (asynchrone, hors du cache HTTP de la page)
-// ============================================
-if (navigator.sendBeacon) {
-    navigator.sendBeacon('{{ path('app_article_track_view', {'id': article.id}) }}');
-} else {
-    fetch('{{ path('app_article_track_view', {'id': article.id}) }}', {
-        method: 'POST',
-        keepalive: true
-    });
-}
-
 function shareOnWhatsAppPremium() {
     const text = encodeURIComponent(shareConfig.title);
     const url = encodeURIComponent(shareConfig.absoluteUrl);

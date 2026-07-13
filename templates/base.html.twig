@@ -18,16 +18,15 @@
             {{ encore_entry_script_tags('app') }}
         {% endblock %}
     </head>
-        <div class="bg-gray-100">
+    <body>
+        <div class="bg-gray-100" data-controller="advertise-modal">
             {% include 'partials/_header.html.twig' %}
-            {% block body %}
-            {% endblock %}
-        </div>
+                {% block body %}
+                {% endblock %}
             {% include 'partials/_footer.html.twig' %}
-{% block js %}
-    
-{% endblock %}
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3326906173354935" crossorigin="anonymous"></script>
-
+        </div>
+        {% block js %}
+            
+        {% endblock %}
     </body>
 </html>

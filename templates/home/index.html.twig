@@ -6,7 +6,7 @@
 {% block meta %}
     {{ parent() }}
 
-    <meta name="description" content="Toute l'actualité d'Afrique centrale en continu : RDC et la région — politique, économie, société, sport et culture, mise à jour chaque jour par la rédaction de TUMAINI AFRICA NEWS.">
+    <meta name="description" content="Toute l'actualité d'Afrique centrale en continu : RDC, Burundi et la région — politique, économie, société, sport et culture, mise à jour chaque jour par la rédaction de TUMAINI AFRICA NEWS.">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="{{ app.request.uri }}">
 
@@ -14,7 +14,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ app.request.uri }}">
     <meta property="og:title" content="TUMAINI AFRICA NEWS — Actualités d'Afrique Centrale">
-    <meta property="og:description" content="Toute l'actualité d'Afrique centrale en continu : RDC et la région — politique, économie, société, sport et culture.">
+    <meta property="og:description" content="Toute l'actualité d'Afrique centrale en continu : RDC, Burundi et la région — politique, économie, société, sport et culture.">
     <meta property="og:site_name" content="TUMAINI AFRICA NEWS">
     <meta property="og:image" content="{{ absolute_url(asset('images/static/og-image.jpg')) }}">
     <meta property="og:image:width" content="1200">
@@ -23,7 +23,7 @@
     {# === TWITTER === #}
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="TUMAINI AFRICA NEWS — Actualités d'Afrique Centrale">
-    <meta name="twitter:description" content="Toute l'actualité d'Afrique centrale en continu : RDC et la région.">
+    <meta name="twitter:description" content="Toute l'actualité d'Afrique centrale en continu : RDC, Burundi et la région.">
     <meta name="twitter:image" content="{{ absolute_url(asset('images/static/og-image.jpg')) }}">
 
     {# === SCHEMA.ORG === #}
@@ -64,44 +64,53 @@
     </div>
 
     {# Modal Publicité Premium #}
-    <div id="advertise-modal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300">
+    <div id="advertise-modal" tabindex="-1" aria-hidden="true" data-action="click->advertise-modal#closeOnBackdrop" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300">
         <div class="relative mx-4 w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white shadow-2xl transition-all duration-300 animate-fadeInUp">
             <div class="relative custom-gradient px-6 py-4">
-                <h3 id="modal-title" class="text-xl font-bold text-white tracking-wide"></h3>
-                <button type="button" class="absolute right-4 top-4 text-white/80 hover:text-white transition-colors" data-modal-hide="advertise-modal">
+                <h3 data-advertise-modal-target="title" class="text-xl font-bold text-white tracking-wide"></h3>
+                <button type="button" class="absolute right-4 top-4 text-white/80 hover:text-white transition-colors" data-action="advertise-modal#close">
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                     </svg>
                 </button>
             </div>
-            <div id="modal-body" class="p-6 space-y-4 text-gray-700"></div>
+            <div data-advertise-modal-target="body" class="p-6 space-y-4 text-gray-700"></div>
             <div class="border-t border-gray-100 px-6 py-4 bg-gray-50">
-                <button data-modal-hide="advertise-modal" class="rounded-lg bg-amber-600 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-amber-700 hover:shadow-md">Fermer</button>
+                <button data-action="advertise-modal#close" class="rounded-lg bg-amber-600 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-amber-700 hover:shadow-md">Fermer</button>
             </div>
         </div>
     </div>
 
     {# Hero Carousel Publicités #}
     <div class="relative mx-auto max-w-6xl px-4 my-6">
-        <div class="relative overflow-hidden rounded-2xl shadow-xl">
-            <div id="fixedCarousel" class="flex transition-transform duration-700 ease-out">
+        <div class="relative overflow-hidden rounded-2xl shadow-xl" data-controller="carousel" data-carousel-interval-value="8000">
+            <div id="fixedCarousel" data-carousel-target="track" class="flex transition-transform duration-700 ease-out">
                 {% for i in 0..2 %}
-                <div class="carousel-fixed-item relative h-[220px] w-full shrink-0 md:h-[280px]">
+                <div class="carousel-fixed-item relative h-[220px] w-full flex-shrink-0 md:h-[280px]">
                     {% if i < advertises_count and last_advertise[i] %}
                         {% set imageUrl = vich_uploader_asset(last_advertise[i], 'imageFile') %}
-                        <img src="{{ imageUrl ? imageUrl|imagine_filter('thumb_hero') : '/images/static/default.jpg' }}" 
+                        {% set imageUrlFiltered = imageUrl ? imageUrl|imagine_filter('thumb_hero') : '/images/static/default.jpg' %}
+                        <img src="{{ imageUrlFiltered }}" 
                              alt="{{ last_advertise[i].title }}" 
                              loading="lazy"
                              decoding="async"
                              width="1200"
                              height="280"
                              class="h-full w-full object-cover">
-                        <div class="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent"></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
                         <div class="absolute bottom-0 left-0 right-0 p-6 text-white">
                             <span class="inline-block rounded-full bg-amber-500 px-3 py-1 text-xs font-bold uppercase shadow-lg">Publicité</span>
                             <h3 class="mt-2 text-xl font-bold">{{ last_advertise[i].company }}</h3>
                             <p class="text-sm opacity-90">{{ last_advertise[i].title }}</p>
-                            <button onclick="showAdvertiseModal({{ last_advertise[i].id }})" class="mt-2 inline-flex items-center text-amber-300 hover:text-amber-200 font-semibold text-sm transition-colors">
+                            <button data-action="advertise-modal#open"
+                                    data-advertise-modal-id-param="{{ last_advertise[i].id }}"
+                                    data-advertise-modal-title-param="{{ last_advertise[i].title }}"
+                                    data-advertise-modal-description-param="{{ last_advertise[i].description }}"
+                                    data-advertise-modal-company-param="{{ last_advertise[i].company }}"
+                                    data-advertise-modal-phone-param="{{ last_advertise[i].phoneNumber }}"
+                                    data-advertise-modal-email-param="{{ last_advertise[i].email }}"
+                                    data-advertise-modal-image-param="{{ imageUrlFiltered }}"
+                                    class="mt-2 inline-flex items-center text-amber-300 hover:text-amber-200 font-semibold text-sm transition-colors">
                                 {{ 'home.read_more'|trans }} →
                             </button>
                         </div>
@@ -116,22 +125,22 @@
                 </div>
                 {% endfor %}
             </div>
-            <button class="carousel-prev absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-amber-600 hover:scale-110">
+            <button data-action="carousel#prev" class="carousel-prev absolute left-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-amber-600 hover:scale-110">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
             </button>
-            <button class="carousel-next absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-amber-600 hover:scale-110">
+            <button data-action="carousel#next" class="carousel-next absolute right-3 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-amber-600 hover:scale-110">
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
             </button>
             <div class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-2">
                 {% for i in 0..2 %}
-                <button class="carousel-dot h-2 w-2 rounded-full transition-all data-[active=true]:w-6 data-[active=true]:bg-amber-500 bg-white/60" data-index="{{ i }}"></button>
+                <button data-carousel-target="dot" data-action="carousel#goTo" data-carousel-index-param="{{ i }}" class="carousel-dot h-2 w-2 rounded-full transition-all data-[active=true]:w-6 data-[active=true]:bg-amber-500 bg-white/60" data-index="{{ i }}"></button>
                 {% endfor %}
             </div>
         </div>
     </div>
 
     <!-- Section principale -->
-    <section class="bg-linear-to-b from-gray-50 to-white py-8">
+    <section class="bg-gradient-to-b from-gray-50 to-white py-8">
         <div class="container mx-auto px-4">
             <div class="flex flex-col gap-8 lg:flex-row">
                 
@@ -140,18 +149,18 @@
                     <h1 class="sr-only">TUMAINI AFRICA NEWS — Actualités d'Afrique Centrale, RDC et Burundi</h1>
 
                     <!-- Mega Carousel des articles urgents -->
-                    <div class="relative mb-8 overflow-hidden rounded-2xl shadow-xl group">
-                        <div id="urgentCarousel" class="flex transition-transform duration-700 ease-out">
+                    <div class="relative mb-8 overflow-hidden rounded-2xl shadow-xl group" data-controller="carousel" data-carousel-interval-value="6000">
+                        <div id="urgentCarousel" data-carousel-target="track" class="flex transition-transform duration-700 ease-out">
                             {% for article in urgents %}
-                            <div class="relative h-[500px] w-full shrink-0 md:h-[550px]">
-                                <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('images/static/default.jpg'))|imagine_filter('thumb_hero') }}" 
+                            <div class="relative h-[500px] w-full flex-shrink-0 md:h-[550px]">
+                                <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_hero') }}" 
                                      alt="{{ article.title }}" 
                                      loading="lazy"
                                      decoding="async"
                                      width="1200"
                                      height="550"
                                      class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-linear-to-t from-black/80 via-black/40 to-transparent"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 right-0 p-6 text-white md:p-8">
                                     <span class="inline-block rounded-full bg-amber-500 px-3 py-1 text-xs font-bold uppercase tracking-wide shadow-lg">{{ article.category.name }}</span>
                                     <h2 class="mt-3 text-2xl font-bold leading-tight md:text-3xl lg:text-4xl">
@@ -164,10 +173,10 @@
                             </div>
                             {% endfor %}
                         </div>
-                        <button class="urgent-prev absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-amber-600">
+                        <button data-action="carousel#prev" class="urgent-prev absolute left-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-amber-600">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                         </button>
-                        <button class="urgent-next absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-amber-600">
+                        <button data-action="carousel#next" class="urgent-next absolute right-4 top-1/2 -translate-y-1/2 rounded-full bg-black/50 p-2 text-white backdrop-blur-sm transition-all hover:bg-amber-600">
                             <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                         </button>
                     </div>
@@ -216,7 +225,7 @@
                                 <div class="space-y-4">
                                     {% for article in category_articles|slice(0, 4) %}
                                         <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" class="group flex gap-4 transition-all hover:bg-gray-50 rounded-lg p-2 -mx-2">
-                                            <div class="h-20 w-20 shrink-0 overflow-hidden rounded-lg">
+                                            <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
                                                 <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
                                                      src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                                      alt="{{ article.title }}"
@@ -239,7 +248,7 @@
 
                     <!-- Publicité milieu premium -->
                     {% if middle_advertise %}
-                    <div class="mt-8 overflow-hidden rounded-2xl bg-linear-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 shadow-md hover:shadow-lg transition-all">
+                    <div class="mt-8 overflow-hidden rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 shadow-md hover:shadow-lg transition-all">
                         <div class="p-6">
                             <div class="flex items-center gap-2 mb-4">
                                 <span class="inline-block rounded-full bg-amber-500 px-3 py-0.5 text-xs font-bold text-white uppercase">Sponsorisé</span>
@@ -285,14 +294,14 @@
                     <div class="space-y-4">
                         {% for article in [lastSecond, lastThird] %}
                         <div class="group relative overflow-hidden rounded-xl shadow-lg">
-                            <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}"  
+                            <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}" 
                                  alt="{{ article.title }}" 
                                  loading="lazy"
                                  decoding="async"
                                  width="600"
                                  height="224"
                                  class="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105">
-                            <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                             <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                                 <span class="inline-block rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold uppercase">{{ article.category.name }}</span>
                                 <h3 class="mt-2 text-lg font-bold leading-tight">
@@ -321,7 +330,7 @@
                                  width="400"
                                  height="288"
                                  class="h-72 w-full object-cover">
-                            <div class="absolute inset-0 bg-linear-to-t from-black/80 to-transparent"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                             <div class="absolute bottom-0 p-4 text-white">
                                 <span class="inline-block rounded-full bg-amber-500 px-2 py-0.5 text-xs font-bold">{{ first_viewed.category.name }}</span>
                                 <h3 class="mt-1 text-lg font-bold"><a href="{{ path('app_single_article_public', {'slug': first_viewed.slug}) }}" class="hover:text-amber-300">{{ first_viewed.title }}</a></h3>
@@ -337,7 +346,7 @@
                         <div class="space-y-3">
                             {% for item in most_viewed|slice(1, 5) %}
                             <a href="{{ path('app_single_article_public', {'slug': item.slug}) }}" class="group flex gap-3 transition-all hover:bg-gray-50 rounded-lg p-2 -mx-2">
-                                <div class="h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+                                <div class="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg">
                                     <img src="{{ (vich_uploader_asset(item, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                          loading="lazy"
@@ -366,24 +375,24 @@
 
     <!-- Section tendances horizontale -->
     <section class="bg-gray-50 py-10">
-        <div class="container mx-auto px-4">
+        <div class="container mx-auto px-4" data-controller="scroll-carousel">
             <div class="flex items-center justify-between mb-6">
                 <div class="flex items-center gap-2">
                     <svg class="h-7 w-7 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                     <h2 class="text-2xl font-bold text-gray-800">{{ 'home.weekly'|trans }}</h2>
                 </div>
                 <div class="flex gap-2">
-                    <button id="trendPrev" class="rounded-full bg-white p-2 shadow-md text-gray-600 hover:bg-amber-500 hover:text-white transition-all">
+                    <button data-action="scroll-carousel#scrollPrev" class="rounded-full bg-white p-2 shadow-md text-gray-600 hover:bg-amber-500 hover:text-white transition-all">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </button>
-                    <button id="trendNext" class="rounded-full bg-white p-2 shadow-md text-gray-600 hover:bg-amber-500 hover:text-white transition-all">
+                    <button data-action="scroll-carousel#scrollNext" class="rounded-full bg-white p-2 shadow-md text-gray-600 hover:bg-amber-500 hover:text-white transition-all">
                         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
                     </button>
                 </div>
             </div>
-            <div id="trendCarousel" class="flex gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x">
+            <div data-scroll-carousel-target="container" class="flex gap-6 overflow-x-auto scrollbar-hide pb-4 snap-x">
                 {% for article in trending %}
-                <div class="w-72 shrink-0 snap-start">
+                <div class="w-72 flex-shrink-0 snap-start">
                     <div class="group rounded-xl bg-white shadow-md overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
                         <div class="overflow-hidden h-44">
                             <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_medium') }}" 
@@ -435,10 +444,10 @@
                         <a href="{{ path('app_single_article_public', {'slug': category_international.articles[0].slug}) }}" 
                         class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
                             <div class="relative h-64 lg:h-72 overflow-hidden">
-                                <img src="{{ (vich_uploader_asset(category_international.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}"
+                                <img src="{{ (vich_uploader_asset(category_international.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}" 
                                     alt="{{ category_international.articles[0].title }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                                     <span class="inline-block bg-amber-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-2">À la une</span>
                                     <h3 class="text-xl font-bold group-hover:text-amber-300 transition-colors line-clamp-3">{{ category_international.articles[0].title }}</h3>
@@ -454,7 +463,7 @@
                             {% for article in category_international.articles|slice(1, 4) %}
                             <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
                             class="group flex gap-4 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-all hover:shadow-md">
-                                <div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg">
+                                <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
                                     <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                         alt="{{ article.title }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
@@ -498,10 +507,10 @@
                         <a href="{{ path('app_single_article_public', {'slug': category_sport.articles[0].slug}) }}" 
                         class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
                             <div class="relative h-64 lg:h-72 overflow-hidden">
-                                <img src="{{ (vich_uploader_asset(category_sport.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}"
+                                <img src="{{ (vich_uploader_asset(category_sport.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}" 
                                     alt="{{ category_sport.articles[0].title }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                                     <span class="inline-block bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-2">🔴 Dernière minute</span>
                                     <h3 class="text-xl font-bold group-hover:text-amber-300 transition-colors line-clamp-3">{{ category_sport.articles[0].title }}</h3>
@@ -517,7 +526,7 @@
                             {% for article in category_sport.articles|slice(1, 4) %}
                             <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
                             class="group flex gap-4 bg-white rounded-xl p-3 hover:bg-gray-100 transition-all hover:shadow-md">
-                                <div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg">
+                                <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
                                     <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                         alt="{{ article.title }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
@@ -564,7 +573,7 @@
                                 <img src="{{ (vich_uploader_asset(category_divertissement.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}" 
                                     alt="{{ category_divertissement.articles[0].title }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                                     <span class="inline-block bg-purple-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-2">🎭 À découvrir</span>
                                     <h3 class="text-xl font-bold group-hover:text-amber-300 transition-colors line-clamp-3">{{ category_divertissement.articles[0].title }}</h3>
@@ -580,8 +589,8 @@
                             {% for article in category_divertissement.articles|slice(1, 4) %}
                             <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
                             class="group flex gap-4 bg-gray-50 rounded-xl p-3 hover:bg-purple-50 transition-all hover:shadow-md">
-                                <div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg">
-                                    <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}"
+                                <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
+                                    <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                         alt="{{ article.title }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                                 </div>
@@ -627,7 +636,7 @@
                                 <img src="{{ (vich_uploader_asset(category_fait_divers.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}" 
                                     alt="{{ category_fait_divers.articles[0].title }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                                <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                                 <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
                                     <span class="inline-block bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded mb-2">🔴 Dernière minute</span>
                                     <h3 class="text-xl font-bold group-hover:text-amber-300 transition-colors line-clamp-3">{{ category_fait_divers.articles[0].title }}</h3>
@@ -643,7 +652,7 @@
                             {% for article in category_fait_divers.articles|slice(1, 4) %}
                             <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
                             class="group flex gap-4 bg-white rounded-xl p-3 hover:bg-gray-100 transition-all hover:shadow-md">
-                                <div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg">
+                                <div class="w-24 h-24 flex-shrink-0 overflow-hidden rounded-lg">
                                     <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                         alt="{{ article.title }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
@@ -661,7 +670,7 @@
             </div>
         </section>
     {% endif %}
-    <section class="py-12 bg-linear-to-b from-gray-50 to-white">
+    <section class="py-12 bg-gradient-to-b from-gray-50 to-white">
         <div class="container mx-auto px-4">
             <div class="mb-8 text-center">
                 <div class="flex items-center justify-center gap-2 mb-2">
@@ -729,121 +738,6 @@
 {% endblock %}
 
 {% block js %}
-<script>
-// Modal data
-const advertisesData = [
-    {% for advertise in last_advertise %}
-    {% set advertiseImg = vich_uploader_asset(advertise, 'imageFile') %}
-    {
-        id: {{ advertise.id }},
-        title: "{{ advertise.title|escape('js') }}",
-        description: "{{ advertise.description|escape('js') }}",
-        company: "{{ advertise.company|escape('js') }}",
-        phoneNumber: "{{ advertise.phoneNumber|escape('js') }}",
-        email: "{{ advertise.email|escape('js') }}",
-        imageUrl: "{{ advertiseImg ? advertiseImg|imagine_filter('thumb_medium') : '' }}"
-    }{% if not loop.last %},{% endif %}
-    {% endfor %}
-];
-
-function showAdvertiseModal(advertiseId) {
-    const advertise = advertisesData.find(a => a.id === advertiseId);
-    if (advertise) {
-        document.getElementById('modal-title').textContent = advertise.title;
-        document.getElementById('modal-body').innerHTML = `
-            <div class="space-y-3">
-                ${advertise.description ? `<p>${advertise.description}</p>` : ''}
-                <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div><span class="font-semibold">Entreprise:</span> ${advertise.company || '—'}</div>
-                    ${advertise.phoneNumber ? `<div><span class="font-semibold">Tél:</span> ${advertise.phoneNumber}</div>` : ''}
-                    ${advertise.email ? `<div><span class="font-semibold">Email:</span> ${advertise.email}</div>` : ''}
-                </div>
-                ${advertise.imageUrl ? `<img src="${advertise.imageUrl}" class="rounded-lg mt-2" loading="lazy">` : ''}
-            </div>
-        `;
-        document.getElementById('advertise-modal').classList.remove('hidden');
-        document.getElementById('advertise-modal').classList.add('flex');
-    }
-}
-
-document.querySelectorAll('[data-modal-hide="advertise-modal"]').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.getElementById('advertise-modal').classList.add('hidden');
-        document.getElementById('advertise-modal').classList.remove('flex');
-    });
-});
-
-// Fixed carousel
-const fixedCarousel = document.getElementById('fixedCarousel');
-const fixedItems = document.querySelectorAll('.carousel-fixed-item');
-const fixedDots = document.querySelectorAll('.carousel-dot');
-let fixedIndex = 0;
-
-function updateFixedCarousel() {
-    fixedCarousel.style.transform = `translateX(-${fixedIndex * 100}%)`;
-    fixedDots.forEach((dot, i) => {
-        dot.setAttribute('data-active', i === fixedIndex);
-    });
-}
-
-document.querySelector('.carousel-prev')?.addEventListener('click', () => {
-    fixedIndex = (fixedIndex - 1 + fixedItems.length) % fixedItems.length;
-    updateFixedCarousel();
-});
-
-document.querySelector('.carousel-next')?.addEventListener('click', () => {
-    fixedIndex = (fixedIndex + 1) % fixedItems.length;
-    updateFixedCarousel();
-});
-
-fixedDots.forEach(dot => {
-    dot.addEventListener('click', () => {
-        fixedIndex = parseInt(dot.dataset.index);
-        updateFixedCarousel();
-    });
-});
-
-setInterval(() => {
-    fixedIndex = (fixedIndex + 1) % fixedItems.length;
-    updateFixedCarousel();
-}, 8000);
-
-// Urgent carousel
-const urgentCarousel = document.getElementById('urgentCarousel');
-if (urgentCarousel) {
-    const urgentSlides = urgentCarousel.children;
-    let urgentIndex = 0;
-
-    function updateUrgentCarousel() {
-        urgentCarousel.style.transform = `translateX(-${urgentIndex * 100}%)`;
-    }
-
-    document.querySelector('.urgent-prev')?.addEventListener('click', () => {
-        urgentIndex = (urgentIndex - 1 + urgentSlides.length) % urgentSlides.length;
-        updateUrgentCarousel();
-    });
-
-    document.querySelector('.urgent-next')?.addEventListener('click', () => {
-        urgentIndex = (urgentIndex + 1) % urgentSlides.length;
-        updateUrgentCarousel();
-    });
-
-    setInterval(() => {
-        urgentIndex = (urgentIndex + 1) % urgentSlides.length;
-        updateUrgentCarousel();
-    }, 6000);
-}
-
-// Trend carousel scroll
-const trendCarousel = document.getElementById('trendCarousel');
-document.getElementById('trendPrev')?.addEventListener('click', () => {
-    trendCarousel.scrollBy({ left: -300, behavior: 'smooth' });
-});
-document.getElementById('trendNext')?.addEventListener('click', () => {
-    trendCarousel.scrollBy({ left: 300, behavior: 'smooth' });
-});
-</script>
-
 <style>
 /* Animations */
 @keyframes marquee {

@@ -61,7 +61,7 @@
                     <!-- Card Header -->
                     <div class="relative h-48 bg-gradient-to-br from-amber-900/40 via-orange-950/60 to-[#0f0903] flex items-center justify-center overflow-hidden">
                         {% if article.imageUrl %}
-                            <img src="{{ vich_uploader_asset(article, 'imageFile') }}" 
+                            <img src="{{ vich_uploader_asset(article, 'imageFile')|imagine_filter('thumb_medium') }}" 
                                  alt="{{ article.title }}" 
                                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             <div class="absolute inset-0 bg-black/40"></div>

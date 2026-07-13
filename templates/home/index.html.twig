@@ -89,7 +89,7 @@
                 <div class="carousel-fixed-item relative h-[220px] w-full shrink-0 md:h-[280px]">
                     {% if i < advertises_count and last_advertise[i] %}
                         {% set imageUrl = vich_uploader_asset(last_advertise[i], 'imageFile') %}
-                        <img src="{{ imageUrl ?: '/images/static/default.jpg' }}" 
+                        <img src="{{ imageUrl ? imageUrl|imagine_filter('thumb_hero') : '/images/static/default.jpg' }}" 
                              alt="{{ last_advertise[i].title }}" 
                              loading="lazy"
                              decoding="async"
@@ -144,7 +144,7 @@
                         <div id="urgentCarousel" class="flex transition-transform duration-700 ease-out">
                             {% for article in urgents %}
                             <div class="relative h-[500px] w-full shrink-0 md:h-[550px]">
-                                <img src="{{ vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg') }}" 
+                                <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('images/static/default.jpg'))|imagine_filter('thumb_hero') }}" 
                                      alt="{{ article.title }}" 
                                      loading="lazy"
                                      decoding="async"
@@ -183,7 +183,7 @@
                                 <a href="{{ path('app_single_article_public', {'slug': lastFirst.slug}) }}" class="group block">
                                     <div class="overflow-hidden rounded-xl mb-4">
                                         <img class="h-64 w-full object-cover transition-transform duration-500 group-hover:scale-105" 
-                                             src="{{ vich_uploader_asset(lastFirst, 'imageFile')|default('/images/static/default.jpg') }}" 
+                                             src="{{ (vich_uploader_asset(lastFirst, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_medium') }}" 
 
                                              alt="{{ lastFirst.title }}"
                                              loading="lazy"
@@ -218,7 +218,7 @@
                                         <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" class="group flex gap-4 transition-all hover:bg-gray-50 rounded-lg p-2 -mx-2">
                                             <div class="h-20 w-20 shrink-0 overflow-hidden rounded-lg">
                                                 <img class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" 
-                                                     src="{{ vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg') }}" 
+                                                     src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                                      alt="{{ article.title }}"
                                                      loading="lazy"
                                                      decoding="async"
@@ -247,7 +247,7 @@
                             </div>
                             <div class="flex flex-col md:flex-row gap-6 items-center">
                                 {% if vich_uploader_asset(middle_advertise, 'imageFile') %}
-                                    <img src="{{ vich_uploader_asset(middle_advertise, 'imageFile') }}" 
+                                    <img src="{{ vich_uploader_asset(middle_advertise, 'imageFile')|imagine_filter('thumb_medium') }}" 
                                          alt="{{ middle_advertise.title }}" 
                                          loading="lazy"
                                          decoding="async"
@@ -285,7 +285,7 @@
                     <div class="space-y-4">
                         {% for article in [lastSecond, lastThird] %}
                         <div class="group relative overflow-hidden rounded-xl shadow-lg">
-                            <img src="{{ vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg') }}" 
+                            <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}"  
                                  alt="{{ article.title }}" 
                                  loading="lazy"
                                  decoding="async"
@@ -314,7 +314,7 @@
                         </div>
                         
                         <div class="relative mb-6 overflow-hidden rounded-xl">
-                            <img src="{{ vich_uploader_asset(first_viewed, 'imageFile')|default('/images/static/default.jpg') }}" 
+                            <img src="{{ (vich_uploader_asset(first_viewed, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_medium') }}" 
                                  alt="{{ first_viewed.title }}" 
                                  loading="lazy"
                                  decoding="async"
@@ -338,7 +338,7 @@
                             {% for item in most_viewed|slice(1, 5) %}
                             <a href="{{ path('app_single_article_public', {'slug': item.slug}) }}" class="group flex gap-3 transition-all hover:bg-gray-50 rounded-lg p-2 -mx-2">
                                 <div class="h-16 w-16 shrink-0 overflow-hidden rounded-lg">
-                                    <img src="{{ vich_uploader_asset(item, 'imageFile')|default('/images/static/default.jpg') }}" 
+                                    <img src="{{ (vich_uploader_asset(item, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                          class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                          loading="lazy"
                                          decoding="async"
@@ -386,7 +386,7 @@
                 <div class="w-72 shrink-0 snap-start">
                     <div class="group rounded-xl bg-white shadow-md overflow-hidden transition-all hover:shadow-xl hover:-translate-y-1">
                         <div class="overflow-hidden h-44">
-                            <img src="{{ vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg') }}" 
+                            <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_medium') }}" 
                                  class="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                                  loading="lazy"
                                  decoding="async"
@@ -435,7 +435,7 @@
                         <a href="{{ path('app_single_article_public', {'slug': category_international.articles[0].slug}) }}" 
                         class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
                             <div class="relative h-64 lg:h-72 overflow-hidden">
-                                <img src="{{ vich_uploader_asset(category_international.articles[0], 'imageFile')|default('/images/static/default.jpg') }}" 
+                                <img src="{{ (vich_uploader_asset(category_international.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}"
                                     alt="{{ category_international.articles[0].title }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
@@ -455,7 +455,7 @@
                             <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
                             class="group flex gap-4 bg-gray-50 rounded-xl p-3 hover:bg-gray-100 transition-all hover:shadow-md">
                                 <div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg">
-                                    <img src="{{ vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg') }}" 
+                                    <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                         alt="{{ article.title }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                                 </div>
@@ -498,7 +498,7 @@
                         <a href="{{ path('app_single_article_public', {'slug': category_sport.articles[0].slug}) }}" 
                         class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
                             <div class="relative h-64 lg:h-72 overflow-hidden">
-                                <img src="{{ vich_uploader_asset(category_sport.articles[0], 'imageFile')|default('/images/static/default.jpg') }}" 
+                                <img src="{{ (vich_uploader_asset(category_sport.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}"
                                     alt="{{ category_sport.articles[0].title }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
@@ -518,7 +518,7 @@
                             <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
                             class="group flex gap-4 bg-white rounded-xl p-3 hover:bg-gray-100 transition-all hover:shadow-md">
                                 <div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg">
-                                    <img src="{{ vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg') }}" 
+                                    <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                         alt="{{ article.title }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                                 </div>
@@ -561,7 +561,7 @@
                         <a href="{{ path('app_single_article_public', {'slug': category_divertissement.articles[0].slug}) }}" 
                         class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
                             <div class="relative h-64 lg:h-72 overflow-hidden">
-                                <img src="{{ vich_uploader_asset(category_divertissement.articles[0], 'imageFile')|default('/images/static/default.jpg') }}" 
+                                <img src="{{ (vich_uploader_asset(category_divertissement.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}" 
                                     alt="{{ category_divertissement.articles[0].title }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
@@ -581,7 +581,7 @@
                             <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
                             class="group flex gap-4 bg-gray-50 rounded-xl p-3 hover:bg-purple-50 transition-all hover:shadow-md">
                                 <div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg">
-                                    <img src="{{ vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg') }}" 
+                                    <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}"
                                         alt="{{ article.title }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                                 </div>
@@ -624,7 +624,7 @@
                         <a href="{{ path('app_single_article_public', {'slug': category_fait_divers.articles[0].slug}) }}" 
                         class="group block rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-all">
                             <div class="relative h-64 lg:h-72 overflow-hidden">
-                                <img src="{{ vich_uploader_asset(category_fait_divers.articles[0], 'imageFile')|default('/images/static/default.jpg') }}" 
+                                <img src="{{ (vich_uploader_asset(category_fait_divers.articles[0], 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_large') }}" 
                                     alt="{{ category_fait_divers.articles[0].title }}"
                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                 <div class="absolute inset-0 bg-linear-to-t from-black/70 to-transparent"></div>
@@ -644,7 +644,7 @@
                             <a href="{{ path('app_single_article_public', {'slug': article.slug}) }}" 
                             class="group flex gap-4 bg-white rounded-xl p-3 hover:bg-gray-100 transition-all hover:shadow-md">
                                 <div class="w-24 h-24 shrink-0 overflow-hidden rounded-lg">
-                                    <img src="{{ vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg') }}" 
+                                    <img src="{{ (vich_uploader_asset(article, 'imageFile')|default('/images/static/default.jpg'))|imagine_filter('thumb_small') }}" 
                                         alt="{{ article.title }}"
                                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                                 </div>
@@ -733,6 +733,7 @@
 // Modal data
 const advertisesData = [
     {% for advertise in last_advertise %}
+    {% set advertiseImg = vich_uploader_asset(advertise, 'imageFile') %}
     {
         id: {{ advertise.id }},
         title: "{{ advertise.title|escape('js') }}",
@@ -740,7 +741,7 @@ const advertisesData = [
         company: "{{ advertise.company|escape('js') }}",
         phoneNumber: "{{ advertise.phoneNumber|escape('js') }}",
         email: "{{ advertise.email|escape('js') }}",
-        imageUrl: "{{ vich_uploader_asset(advertise, 'imageFile') ?: '' }}"
+        imageUrl: "{{ advertiseImg ? advertiseImg|imagine_filter('thumb_medium') : '' }}"
     }{% if not loop.last %},{% endif %}
     {% endfor %}
 ];
